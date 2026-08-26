@@ -3,6 +3,14 @@ import { supabase } from '../../../lib/supabase'
 
 export const prerender = false
 
+const sessionCookieOptions = {
+  httpOnly: true,
+  secure: import.meta.env.PROD,
+  sameSite: 'lax' as const,
+  path: '/',
+  maxAge: 60 * 60 * 24 * 7,
+}
+
 export const POST: APIRoute = async ({ request, cookies }) => {
   try {
     const rawText = await request.text()
@@ -22,9 +30,22 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       })
     }
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    if (typeof email !== 'string' || typeof password !== 'string' || password.length < 6) {
+      return new Response(JSON.stringify({ error: 'La contraseña debe tener al menos 6 caracteres' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    const requestUrl = new URL(request.url)
+    const origin = requestUrl.origin.replace(/\/$/, '')
+
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: origin,
+      },
     })
 
     if (error) {
@@ -34,29 +55,18 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       })
     }
 
-    cookies.set('sb-access-token', data.session?.access_token || '', {
-      httpOnly: true,
-      secure: import.meta.env.PROD,
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7,
-    })
-
-    cookies.set('sb-refresh-token', data.session?.refresh_token || '', {
-      httpOnly: true,
-      secure: import.meta.env.PROD,
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7,
-    })
+    if (data.session) {
+      cookies.set('sb-access-token', data.session.access_token, sessionCookieOptions)
+      cookies.set('sb-refresh-token', data.session.refresh_token, sessionCookieOptions)
+    }
 
     return new Response(JSON.stringify({ user: data.user, session: data.session }), {
-      status: 200,
+      status: 201,
       headers: { 'Content-Type': 'application/json' },
     })
   } catch (err) {
-    console.error('Login error:', err)
-    const errorMessage = err instanceof Error ? err.message : 'Error al iniciar sesión'
+    console.error('Signup error:', err)
+    const errorMessage = err instanceof Error ? err.message : 'Error al procesar el registro'
     return new Response(JSON.stringify({ error: errorMessage }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' },
