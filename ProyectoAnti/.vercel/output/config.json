@@ -20,7 +20,15 @@
 			"dest": "_render"
 		},
 		{
+			"src": "^/admin/?$",
+			"dest": "_render"
+		},
+		{
 			"src": "^/api/auth/callback/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/auth/create-user/?$",
 			"dest": "_render"
 		},
 		{
@@ -52,11 +60,19 @@
 			"dest": "_render"
 		},
 		{
-			"src": "^/dashboard/?$",
+			"src": "^/api/videos/sections/?$",
 			"dest": "_render"
 		},
 		{
-			"src": "^/reset-password/?$",
+			"src": "^/api/videos/storage/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/videos/upload/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/dashboard/?$",
 			"dest": "_render"
 		},
 		{

@@ -21,7 +21,17 @@ var POST = async ({ request, cookies }) => {
 			email,
 			password
 		});
-		if (error) return new Response(JSON.stringify({ error: error.message }), {
+		if (error) {
+			console.error("[API Login Error] Supabase:", error);
+			let msg = error.message;
+			if (msg.includes("Invalid login credentials")) msg = "Credenciales incorrectas. Verifique su correo electrónico y contraseña.";
+			else if (msg.includes("Email not confirmed")) msg = "Correo no confirmado. Por favor confirme su correo o desactive la confirmación en Supabase.";
+			return new Response(JSON.stringify({ error: msg }), {
+				status: 400,
+				headers: { "Content-Type": "application/json" }
+			});
+		}
+		if (!data.session || !data.session.access_token) return new Response(JSON.stringify({ error: "No se pudo obtener la sesión. Verifique sus credenciales o confirme su cuenta." }), {
 			status: 400,
 			headers: { "Content-Type": "application/json" }
 		});

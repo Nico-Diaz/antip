@@ -1,151 +1,32 @@
----
-import Layout from "../layouts/Layout.astro";
-import { isUserAdmin } from "../lib/auth";
-
-const user = Astro.locals.user;
-const isAdmin = await isUserAdmin(user);
----
-
-<Layout>
-  <main class="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-7xl mx-auto space-y-8">
-      
-      <!-- Header del Dashboard -->
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-        <div>
-          <div class="flex items-center gap-3">
-            <h1 class="text-3xl font-bold text-[#06203D]">Panel de Videos</h1>
-            {isAdmin ? (
-              <span class="bg-blue-100 text-[#0073CF] border border-blue-200 text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
-                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                Administrador
-              </span>
-            ) : (
-              <span class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1 rounded-full">
-                Usuario
-              </span>
-            )}
-          </div>
-          <p class="text-slate-500 mt-1">
-            Bienvenido, <strong class="text-slate-700">{user?.email || 'Usuario'}</strong>
-          </p>
-        </div>
-
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-          <!-- Buscador global en tiempo real -->
-          <div class="relative min-w-[260px]">
-            <input
-              type="text"
-              id="global-search"
-              placeholder="Buscar videos por título..."
-              class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#0073CF] focus:bg-white transition-all shadow-sm"
-            />
-            <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-          </div>
-
-          {isAdmin && (
-            <a
-              href="/admin"
-              class="bg-[#0073CF] hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-xl transition-all shadow-sm hover:shadow text-sm flex items-center justify-center gap-2"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-              Panel Admin
-            </a>
-          )}
-
-          <form action="/api/auth/logout" method="POST">
-            <button
-              type="submit"
-              class="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 px-4 rounded-xl transition-colors shadow-sm hover:shadow text-sm flex items-center justify-center gap-2"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-              Cerrar Sesión
-            </button>
-          </form>
-        </div>
-      </div>
-
-      <!-- Contenedor de Videos (Solo Lectura para Todos los Usuarios) -->
-      <div id="main-sections-container" class="space-y-8">
-        <div class="bg-white rounded-2xl p-12 border border-slate-200 text-center">
-          <div class="animate-spin inline-block w-8 h-8 border-4 border-current border-t-transparent text-[#0073CF] rounded-full" role="status">
-            <span class="sr-only">Cargando...</span>
-          </div>
-          <p class="text-slate-500 mt-3 text-sm font-medium">Cargando módulos y videos...</p>
-        </div>
-      </div>
-
-    </div>
-  </main>
-
-  <!-- Reproductor Modal de Video -->
-  <div
-    id="video-modal"
-    class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md transition-all duration-300 opacity-0"
-    role="dialog"
-    aria-modal="true"
-  >
-    <div class="relative w-full max-w-4xl bg-slate-900 rounded-2xl shadow-2xl overflow-hidden border border-slate-800 flex flex-col max-h-[90vh] transform scale-95 transition-transform duration-300">
-      <!-- Header del Modal -->
-      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950">
-        <div class="flex items-center gap-3">
-          <span class="bg-[#0073CF] text-white p-2 rounded-xl shadow">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>
-          </span>
-          <h3 id="modal-video-title" class="text-lg font-bold text-white truncate max-w-lg">
-            Reproduciendo Video
-          </h3>
-        </div>
-        <button
-          id="close-modal-btn"
-          class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-colors"
-          title="Cerrar (Esc)"
-        >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
-      </div>
-
-      <!-- Contenedor del Reproductor Embebido -->
-      <div id="modal-video-container" class="aspect-video w-full bg-black flex items-center justify-center">
-        <!-- Dynamic Player -->
-      </div>
-
-      <!-- Detalles del Video -->
-      <div class="p-6 bg-slate-900 border-t border-slate-800 overflow-y-auto">
-        <h4 class="text-white font-semibold mb-1 text-base" id="modal-video-subtitle"></h4>
-        <p id="modal-video-desc" class="text-slate-300 text-sm leading-relaxed whitespace-pre-line"></p>
-        <div class="mt-4 pt-4 border-t border-slate-800 flex justify-end">
-          <a
-            id="modal-external-link"
-            href="#"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-xs text-[#0073CF] hover:underline flex items-center gap-1"
-          >
-            Abrir enlace original en pestaña nueva
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script is:inline>
+import { t as __exportAll } from "./rolldown-runtime_D7D4PA-g.mjs";
+import { E as maybeRenderHead, F as createAstro, T as renderTemplate, b as renderComponent } from "./sequence_CYEvADDU.mjs";
+import { t as createComponent } from "./compiler_DMisAhpY.mjs";
+import { t as isUserAdmin } from "./auth_CoTxHK05.mjs";
+import { t as $$Layout } from "./Layout_w9nw11YJ.mjs";
+//#region src/pages/dashboard.astro
+var dashboard_exports = /* @__PURE__ */ __exportAll({
+	default: () => $$Dashboard,
+	file: () => $$file,
+	url: () => $$url
+});
+createAstro("https://astro.build");
+var $$Dashboard = createComponent(async ($$result, $$props, $$slots) => {
+	const Astro = $$result.createAstro($$props, $$slots);
+	Astro.self = $$Dashboard;
+	const user = Astro.locals.user;
+	const isAdmin = await isUserAdmin(user);
+	return renderTemplate`${renderComponent($$result, "Layout", $$Layout, {}, { "default": async ($$result) => renderTemplate`${maybeRenderHead($$result)}<main class="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8"><div class="max-w-7xl mx-auto space-y-8"><!-- Header del Dashboard --><div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6"><div><div class="flex items-center gap-3"><h1 class="text-3xl font-bold text-[#06203D]">Panel de Videos</h1>${isAdmin ? renderTemplate`<span class="bg-blue-100 text-[#0073CF] border border-blue-200 text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>Administrador</span>` : renderTemplate`<span class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1 rounded-full">Usuario</span>`}</div><p class="text-slate-500 mt-1">Bienvenido, <strong class="text-slate-700">${user?.email || "Usuario"}</strong></p></div><div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4"><!-- Buscador global en tiempo real --><div class="relative min-w-[260px]"><input type="text" id="global-search" placeholder="Buscar videos por título..." class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#0073CF] focus:bg-white transition-all shadow-sm"><svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></div>${isAdmin && renderTemplate`<a href="/admin" class="bg-[#0073CF] hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-xl transition-all shadow-sm hover:shadow text-sm flex items-center justify-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>Panel Admin</a>`}<form action="/api/auth/logout" method="POST"><button type="submit" class="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 px-4 rounded-xl transition-colors shadow-sm hover:shadow text-sm flex items-center justify-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>Cerrar Sesión</button></form></div></div><!-- Contenedor de Videos (Solo Lectura para Todos los Usuarios) --><div id="main-sections-container" class="space-y-8"><div class="bg-white rounded-2xl p-12 border border-slate-200 text-center"><div class="animate-spin inline-block w-8 h-8 border-4 border-current border-t-transparent text-[#0073CF] rounded-full" role="status"><span class="sr-only">Cargando...</span></div><p class="text-slate-500 mt-3 text-sm font-medium">Cargando módulos y videos...</p></div></div></div></main><div id="video-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md transition-all duration-300 opacity-0" role="dialog" aria-modal="true"><div class="relative w-full max-w-4xl bg-slate-900 rounded-2xl shadow-2xl overflow-hidden border border-slate-800 flex flex-col max-h-[90vh] transform scale-95 transition-transform duration-300"><!-- Header del Modal --><div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950"><div class="flex items-center gap-3"><span class="bg-[#0073CF] text-white p-2 rounded-xl shadow"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"></path></svg></span><h3 id="modal-video-title" class="text-lg font-bold text-white truncate max-w-lg">Reproduciendo Video</h3></div><button id="close-modal-btn" class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-colors" title="Cerrar (Esc)"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div><!-- Contenedor del Reproductor Embebido --><div id="modal-video-container" class="aspect-video w-full bg-black flex items-center justify-center"><!-- Dynamic Player --></div><!-- Detalles del Video --><div class="p-6 bg-slate-900 border-t border-slate-800 overflow-y-auto"><h4 class="text-white font-semibold mb-1 text-base" id="modal-video-subtitle"></h4><p id="modal-video-desc" class="text-slate-300 text-sm leading-relaxed whitespace-pre-line"></p><div class="mt-4 pt-4 border-t border-slate-800 flex justify-end"><a id="modal-external-link" href="#" target="_blank" rel="noopener noreferrer" class="text-xs text-[#0073CF] hover:underline flex items-center gap-1">Abrir enlace original en pestaña nueva<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a></div></div></div></div><script>
     // Utility Helpers para YouTube y Vimeo
     function getYouTubeId(url) {
       if (!url) return null;
-      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
+      const regExp = /^.*(youtu.be\\/|v\\/|u\\/\\w\\/|embed\\/|watch\\?v=|\\&v=|shorts\\/)([^#\\&\\?]*).*/;
       const match = url.match(regExp);
       return (match && match[2].length === 11) ? match[2] : null;
     }
 
     function getVimeoId(url) {
       if (!url) return null;
-      const regExp = /(?:vimeo\.com\/|^)(\d+)/;
+      const regExp = /(?:vimeo\\.com\\/|^)(\\d+)/;
       const match = url.match(regExp);
       return match ? match[1] : null;
     }
@@ -183,7 +64,7 @@ const isAdmin = await isUserAdmin(user);
       }
 
       if (videoUrl.includes('drive.google.com')) {
-        const driveEmbedUrl = videoUrl.replace(/\/view(\?.*)?$/, '/preview').replace(/\/edit(\?.*)?$/, '/preview');
+        const driveEmbedUrl = videoUrl.replace(/\\/view(\\?.*)?$/, '/preview').replace(/\\/edit(\\?.*)?$/, '/preview');
         return '<iframe class="w-full h-full border-0" src="' + driveEmbedUrl + '" allow="autoplay" allowfullscreen></iframe>';
       }
 
@@ -284,7 +165,7 @@ const isAdmin = await isUserAdmin(user);
               html += '<div class="bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group video-card" data-title="' + video.title.toLowerCase() + '" data-desc="' + (video.description || '').toLowerCase() + '">';
               
               // Aspect ratio preview
-              html += '<div class="aspect-video bg-slate-900 relative overflow-hidden cursor-pointer play-trigger" data-video=\'' + jsonVideo + '\'>';
+              html += '<div class="aspect-video bg-slate-900 relative overflow-hidden cursor-pointer play-trigger" data-video=\\'' + jsonVideo + '\\'>';
               if (thumb) {
                 html += '<img src="' + thumb + '" alt="' + video.title + '" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />';
               } else {
@@ -303,7 +184,7 @@ const isAdmin = await isUserAdmin(user);
               }
               html += '</div>';
 
-              html += '<button class="w-full bg-[#06203D] hover:bg-[#0073CF] text-white font-semibold py-2.5 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-sm play-trigger text-sm" data-video=\'' + jsonVideo + '\'>';
+              html += '<button class="w-full bg-[#06203D] hover:bg-[#0073CF] text-white font-semibold py-2.5 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-sm play-trigger text-sm" data-video=\\'' + jsonVideo + '\\'>';
               html += '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg> Reproducir Video</button>';
 
               html += '</div></div>';
@@ -332,5 +213,12 @@ const isAdmin = await isUserAdmin(user);
     }
 
     loadDashboard();
-  </script>
-</Layout>
+  <\/script>` })}`;
+}, "C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/src/pages/dashboard.astro", void 0);
+var $$file = "C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/src/pages/dashboard.astro";
+var $$url = "/dashboard";
+//#endregion
+//#region \0virtual:astro:page:src/pages/dashboard@_@astro
+var page = () => dashboard_exports;
+//#endregion
+export { page };

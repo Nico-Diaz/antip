@@ -34,7 +34,16 @@ var POST = async ({ request, cookies }) => {
 			password,
 			options: { emailRedirectTo: origin }
 		});
-		if (error) return new Response(JSON.stringify({ error: error.message }), {
+		if (error) {
+			let friendlyError = error.message;
+			const msgLower = error.message.toLowerCase();
+			if (msgLower.includes("already registered") || msgLower.includes("already exists") || msgLower.includes("unique constraint")) friendlyError = "Ya existe una cuenta registrada con este correo electrónico.";
+			return new Response(JSON.stringify({ error: friendlyError }), {
+				status: 400,
+				headers: { "Content-Type": "application/json" }
+			});
+		}
+		if (data.user && data.user.identities && data.user.identities.length === 0) return new Response(JSON.stringify({ error: "Ya existe una cuenta registrada con este correo electrónico." }), {
 			status: 400,
 			headers: { "Content-Type": "application/json" }
 		});

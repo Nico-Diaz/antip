@@ -17,7 +17,7 @@ var ASTRO_LOCALS_HEADER = "x-astro-locals";
 var ASTRO_MIDDLEWARE_SECRET_HEADER = "x-astro-middleware-secret";
 //#endregion
 //#region \0virtual:astro-vercel:config
-var middlewareSecret = "e3f2a908-06ff-4f5a-ac5e-9f2d8201101f";
+var middlewareSecret = "d93c0e19-3ec4-42eb-a0d2-973fd818fb95";
 //#endregion
 //#region node_modules/astro/dist/core/middleware/noop-middleware.js
 var NOOP_MIDDLEWARE_FN = async (_ctx, next) => {
@@ -3468,6 +3468,31 @@ var App = class extends BaseApp {
 		"scripts": [],
 		"styles": [],
 		"routeData": {
+			"route": "/admin",
+			"isIndex": false,
+			"type": "page",
+			"pattern": "^\\/admin\\/?$",
+			"segments": [[{
+				"content": "admin",
+				"dynamic": false,
+				"spread": false
+			}]],
+			"params": [],
+			"component": "src/pages/admin.astro",
+			"pathname": "/admin",
+			"prerender": false,
+			"fallbackRoutes": [],
+			"distURL": [],
+			"origin": "project",
+			"_meta": { "trailingSlash": "ignore" }
+		}
+	},
+	{
+		"file": "",
+		"links": [],
+		"scripts": [],
+		"styles": [],
+		"routeData": {
 			"route": "/api/auth/callback",
 			"isIndex": false,
 			"type": "endpoint",
@@ -3492,6 +3517,43 @@ var App = class extends BaseApp {
 			"params": [],
 			"component": "src/pages/api/auth/callback.ts",
 			"pathname": "/api/auth/callback",
+			"prerender": false,
+			"fallbackRoutes": [],
+			"distURL": [],
+			"origin": "project",
+			"_meta": { "trailingSlash": "ignore" }
+		}
+	},
+	{
+		"file": "",
+		"links": [],
+		"scripts": [],
+		"styles": [],
+		"routeData": {
+			"route": "/api/auth/create-user",
+			"isIndex": false,
+			"type": "endpoint",
+			"pattern": "^\\/api\\/auth\\/create-user\\/?$",
+			"segments": [
+				[{
+					"content": "api",
+					"dynamic": false,
+					"spread": false
+				}],
+				[{
+					"content": "auth",
+					"dynamic": false,
+					"spread": false
+				}],
+				[{
+					"content": "create-user",
+					"dynamic": false,
+					"spread": false
+				}]
+			],
+			"params": [],
+			"component": "src/pages/api/auth/create-user.ts",
+			"pathname": "/api/auth/create-user",
 			"prerender": false,
 			"fallbackRoutes": [],
 			"distURL": [],
@@ -3764,18 +3826,30 @@ var App = class extends BaseApp {
 		"scripts": [],
 		"styles": [],
 		"routeData": {
-			"route": "/dashboard",
+			"route": "/api/videos/sections",
 			"isIndex": false,
-			"type": "page",
-			"pattern": "^\\/dashboard\\/?$",
-			"segments": [[{
-				"content": "dashboard",
-				"dynamic": false,
-				"spread": false
-			}]],
+			"type": "endpoint",
+			"pattern": "^\\/api\\/videos\\/sections\\/?$",
+			"segments": [
+				[{
+					"content": "api",
+					"dynamic": false,
+					"spread": false
+				}],
+				[{
+					"content": "videos",
+					"dynamic": false,
+					"spread": false
+				}],
+				[{
+					"content": "sections",
+					"dynamic": false,
+					"spread": false
+				}]
+			],
 			"params": [],
-			"component": "src/pages/dashboard.astro",
-			"pathname": "/dashboard",
+			"component": "src/pages/api/videos/sections.ts",
+			"pathname": "/api/videos/sections",
 			"prerender": false,
 			"fallbackRoutes": [],
 			"distURL": [],
@@ -3789,18 +3863,92 @@ var App = class extends BaseApp {
 		"scripts": [],
 		"styles": [],
 		"routeData": {
-			"route": "/reset-password",
+			"route": "/api/videos/storage",
+			"isIndex": false,
+			"type": "endpoint",
+			"pattern": "^\\/api\\/videos\\/storage\\/?$",
+			"segments": [
+				[{
+					"content": "api",
+					"dynamic": false,
+					"spread": false
+				}],
+				[{
+					"content": "videos",
+					"dynamic": false,
+					"spread": false
+				}],
+				[{
+					"content": "storage",
+					"dynamic": false,
+					"spread": false
+				}]
+			],
+			"params": [],
+			"component": "src/pages/api/videos/storage.ts",
+			"pathname": "/api/videos/storage",
+			"prerender": false,
+			"fallbackRoutes": [],
+			"distURL": [],
+			"origin": "project",
+			"_meta": { "trailingSlash": "ignore" }
+		}
+	},
+	{
+		"file": "",
+		"links": [],
+		"scripts": [],
+		"styles": [],
+		"routeData": {
+			"route": "/api/videos/upload",
+			"isIndex": false,
+			"type": "endpoint",
+			"pattern": "^\\/api\\/videos\\/upload\\/?$",
+			"segments": [
+				[{
+					"content": "api",
+					"dynamic": false,
+					"spread": false
+				}],
+				[{
+					"content": "videos",
+					"dynamic": false,
+					"spread": false
+				}],
+				[{
+					"content": "upload",
+					"dynamic": false,
+					"spread": false
+				}]
+			],
+			"params": [],
+			"component": "src/pages/api/videos/upload.ts",
+			"pathname": "/api/videos/upload",
+			"prerender": false,
+			"fallbackRoutes": [],
+			"distURL": [],
+			"origin": "project",
+			"_meta": { "trailingSlash": "ignore" }
+		}
+	},
+	{
+		"file": "",
+		"links": [],
+		"scripts": [],
+		"styles": [],
+		"routeData": {
+			"route": "/dashboard",
 			"isIndex": false,
 			"type": "page",
-			"pattern": "^\\/reset-password\\/?$",
+			"pattern": "^\\/dashboard\\/?$",
 			"segments": [[{
-				"content": "reset-password",
+				"content": "dashboard",
 				"dynamic": false,
 				"spread": false
 			}]],
 			"params": [],
-			"component": "src/pages/reset-password.astro",
-			"pathname": "/reset-password",
+			"component": "src/pages/dashboard.astro",
+			"pathname": "/dashboard",
 			"prerender": false,
 			"fallbackRoutes": [],
 			"distURL": [],
@@ -3833,34 +3981,42 @@ var App = class extends BaseApp {
 //#endregion
 //#region \0virtual:astro:pages
 var _page0 = () => import("./chunks/generic_Cv6V5OXw.mjs").then((n) => n.t);
-var _page1 = () => import("./chunks/callback_BFCIU1hI.mjs");
-var _page2 = () => import("./chunks/forgot-password_Ctss57o4.mjs");
-var _page3 = () => import("./chunks/google_DiltT7DW.mjs");
-var _page4 = () => import("./chunks/login_CCUe7Ssy.mjs");
-var _page5 = () => import("./chunks/logout_DDvJLWYW.mjs");
-var _page6 = () => import("./chunks/me_BDTG2325.mjs");
-var _page7 = () => import("./chunks/signup_BGXErW7J.mjs");
-var _page8 = () => import("./chunks/update-password_DrdJUSR1.mjs");
-var _page9 = () => import("./chunks/dashboard_Bhw5Rt0M.mjs");
-var _page10 = () => import("./chunks/reset-password_D3lx9TCi.mjs");
-var _page11 = () => import("./chunks/index_Y_m_LXtw.mjs");
+var _page1 = () => import("./chunks/admin_DIKP1SUl.mjs");
+var _page2 = () => import("./chunks/callback_BFCIU1hI.mjs");
+var _page3 = () => import("./chunks/create-user_DUGixkhU.mjs");
+var _page4 = () => import("./chunks/forgot-password_Ctss57o4.mjs");
+var _page5 = () => import("./chunks/google_DiltT7DW.mjs");
+var _page6 = () => import("./chunks/login_DXkBLYxb.mjs");
+var _page7 = () => import("./chunks/logout_iJdE5xXl.mjs");
+var _page8 = () => import("./chunks/me_BDTG2325.mjs");
+var _page9 = () => import("./chunks/signup_gWPbJCIU.mjs");
+var _page10 = () => import("./chunks/update-password_DrdJUSR1.mjs");
+var _page11 = () => import("./chunks/sections_C1k3O4r1.mjs");
+var _page12 = () => import("./chunks/storage_Dn7pQogk.mjs");
+var _page13 = () => import("./chunks/upload_BVccUr-0.mjs");
+var _page14 = () => import("./chunks/dashboard_CnL6lAd-.mjs");
+var _page15 = () => import("./chunks/index_B5cVGOCf.mjs");
 var pageMap = /* @__PURE__ */ new Map([
 	["node_modules/astro/dist/assets/endpoint/generic.js", _page0],
-	["src/pages/api/auth/callback.ts", _page1],
-	["src/pages/api/auth/forgot-password.ts", _page2],
-	["src/pages/api/auth/google.ts", _page3],
-	["src/pages/api/auth/login.ts", _page4],
-	["src/pages/api/auth/logout.ts", _page5],
-	["src/pages/api/auth/me.ts", _page6],
-	["src/pages/api/auth/signup.ts", _page7],
-	["src/pages/api/auth/update-password.ts", _page8],
-	["src/pages/dashboard.astro", _page9],
-	["src/pages/reset-password.astro", _page10],
-	["src/pages/index.astro", _page11]
+	["src/pages/admin.astro", _page1],
+	["src/pages/api/auth/callback.ts", _page2],
+	["src/pages/api/auth/create-user.ts", _page3],
+	["src/pages/api/auth/forgot-password.ts", _page4],
+	["src/pages/api/auth/google.ts", _page5],
+	["src/pages/api/auth/login.ts", _page6],
+	["src/pages/api/auth/logout.ts", _page7],
+	["src/pages/api/auth/me.ts", _page8],
+	["src/pages/api/auth/signup.ts", _page9],
+	["src/pages/api/auth/update-password.ts", _page10],
+	["src/pages/api/videos/sections.ts", _page11],
+	["src/pages/api/videos/storage.ts", _page12],
+	["src/pages/api/videos/upload.ts", _page13],
+	["src/pages/dashboard.astro", _page14],
+	["src/pages/index.astro", _page15]
 ]);
 //#endregion
 //#region \0virtual:astro:manifest
-var _manifest = deserializeManifest({"rootDir":"file:///C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/","cacheDir":"file:///C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/node_modules/.astro/","outDir":"file:///C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/dist/","srcDir":"file:///C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/src/","publicDir":"file:///C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/public/","buildClientDir":"file:///C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/dist/client/","buildServerDir":"file:///C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/dist/server/","adapterName":"@astrojs/vercel","assetsDir":"_astro","routes":[{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"type":"page","component":"_server-islands.astro","params":["name"],"segments":[[{"content":"_server-islands","dynamic":false,"spread":false}],[{"content":"name","dynamic":true,"spread":false}]],"pattern":"^\\/_server-islands\\/([^/]+?)\\/?$","prerender":false,"isIndex":false,"fallbackRoutes":[],"route":"/_server-islands/[name]","origin":"internal","distURL":[],"_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/_image","component":"node_modules/astro/dist/assets/endpoint/generic.js","params":[],"pathname":"/_image","pattern":"^\\/_image\\/?$","segments":[[{"content":"_image","dynamic":false,"spread":false}]],"type":"endpoint","prerender":false,"fallbackRoutes":[],"distURL":[],"isIndex":false,"origin":"internal","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/auth/callback","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/auth\\/callback\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"auth","dynamic":false,"spread":false}],[{"content":"callback","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/auth/callback.ts","pathname":"/api/auth/callback","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/auth/forgot-password","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/auth\\/forgot-password\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"auth","dynamic":false,"spread":false}],[{"content":"forgot-password","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/auth/forgot-password.ts","pathname":"/api/auth/forgot-password","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/auth/google","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/auth\\/google\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"auth","dynamic":false,"spread":false}],[{"content":"google","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/auth/google.ts","pathname":"/api/auth/google","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/auth/login","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/auth\\/login\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"auth","dynamic":false,"spread":false}],[{"content":"login","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/auth/login.ts","pathname":"/api/auth/login","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/auth/logout","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/auth\\/logout\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"auth","dynamic":false,"spread":false}],[{"content":"logout","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/auth/logout.ts","pathname":"/api/auth/logout","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/auth/me","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/auth\\/me\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"auth","dynamic":false,"spread":false}],[{"content":"me","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/auth/me.ts","pathname":"/api/auth/me","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/auth/signup","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/auth\\/signup\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"auth","dynamic":false,"spread":false}],[{"content":"signup","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/auth/signup.ts","pathname":"/api/auth/signup","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/auth/update-password","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/auth\\/update-password\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"auth","dynamic":false,"spread":false}],[{"content":"update-password","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/auth/update-password.ts","pathname":"/api/auth/update-password","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[{"type":"external","src":"_astro/Layout.D2J32PI1.css"}],"routeData":{"route":"/dashboard","isIndex":false,"type":"page","pattern":"^\\/dashboard\\/?$","segments":[[{"content":"dashboard","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/dashboard.astro","pathname":"/dashboard","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[{"type":"external","src":"_astro/Layout.D2J32PI1.css"}],"routeData":{"route":"/reset-password","isIndex":false,"type":"page","pattern":"^\\/reset-password\\/?$","segments":[[{"content":"reset-password","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/reset-password.astro","pathname":"/reset-password","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[{"type":"external","src":"_astro/Layout.D2J32PI1.css"}],"routeData":{"route":"/","isIndex":true,"type":"page","pattern":"^\\/$","segments":[],"params":[],"component":"src/pages/index.astro","pathname":"/","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}}],"serverLike":true,"middlewareMode":"classic","base":"/","trailingSlash":"ignore","compressHTML":"jsx","componentMetadata":[["C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/src/pages/dashboard.astro",{"propagation":"none","containsHead":true}],["C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/src/pages/index.astro",{"propagation":"none","containsHead":true}],["C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/src/pages/reset-password.astro",{"propagation":"none","containsHead":true}]],"renderers":[],"clientDirectives":[["idle","(()=>{var l=(n,t)=>{let i=async()=>{await(await n())()},e=typeof t.value==\"object\"?t.value:void 0,s={timeout:e==null?void 0:e.timeout};\"requestIdleCallback\"in window?window.requestIdleCallback(i,s):setTimeout(i,s.timeout||200)};(self.Astro||(self.Astro={})).idle=l;window.dispatchEvent(new Event(\"astro:idle\"));})();"],["load","(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event(\"astro:load\"));})();"],["media","(()=>{var n=(a,t)=>{let i=async()=>{await(await a())()};if(t.value){let e=matchMedia(t.value);e.matches?i():e.addEventListener(\"change\",i,{once:!0})}};(self.Astro||(self.Astro={})).media=n;window.dispatchEvent(new Event(\"astro:media\"));})();"],["only","(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).only=e;window.dispatchEvent(new Event(\"astro:only\"));})();"],["visible","(()=>{var a=(s,i,o)=>{let r=async()=>{await(await s())()},t=typeof i.value==\"object\"?i.value:void 0,c={rootMargin:t==null?void 0:t.rootMargin},n=new IntersectionObserver(e=>{for(let l of e)if(l.isIntersecting){n.disconnect(),r();break}},c);for(let e of o.children)n.observe(e)};(self.Astro||(self.Astro={})).visible=a;window.dispatchEvent(new Event(\"astro:visible\"));})();"]],"entryModules":{"astro/entrypoints/prerender":"prerender-entry.ZZm8J4Lj.mjs","\u0000virtual:astro:middleware":"virtual_astro_middleware.mjs","\u0000virtual:astro:server-island-manifest":"chunks/_virtual_astro_server-island-manifest_C1Q2srgE.mjs","\u0000virtual:astro:session-driver":"chunks/_virtual_astro_session-driver_C-PI1Pas.mjs","\u0000virtual:astro:actions/noop-entrypoint":"chunks/noop-entrypoint_Z3zFhrGC.mjs","@astrojs/vercel/entrypoint":"entry.mjs","\u0000virtual:astro:page:src/pages/api/auth/callback@_@ts":"chunks/callback_BFCIU1hI.mjs","\u0000virtual:astro:page:src/pages/dashboard@_@astro":"chunks/dashboard_Bhw5Rt0M.mjs","\u0000virtual:astro:page:src/pages/api/auth/forgot-password@_@ts":"chunks/forgot-password_Ctss57o4.mjs","\u0000virtual:astro:page:node_modules/astro/dist/assets/endpoint/generic@_@js":"chunks/generic_Cv6V5OXw.mjs","\u0000virtual:astro:page:src/pages/api/auth/google@_@ts":"chunks/google_DiltT7DW.mjs","\u0000virtual:astro:page:src/pages/index@_@astro":"chunks/index_Y_m_LXtw.mjs","\u0000virtual:astro:page:src/pages/api/auth/login@_@ts":"chunks/login_CCUe7Ssy.mjs","\u0000virtual:astro:page:src/pages/api/auth/logout@_@ts":"chunks/logout_DDvJLWYW.mjs","\u0000virtual:astro:page:src/pages/api/auth/me@_@ts":"chunks/me_BDTG2325.mjs","\u0000virtual:astro:page:src/pages/reset-password@_@astro":"chunks/reset-password_D3lx9TCi.mjs","C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/node_modules/astro/dist/assets/services/sharp.js":"chunks/sharp_CPuifg9t.mjs","\u0000virtual:astro:page:src/pages/api/auth/signup@_@ts":"chunks/signup_BGXErW7J.mjs","\u0000virtual:astro:page:src/pages/api/auth/update-password@_@ts":"chunks/update-password_DrdJUSR1.mjs","C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/src/pages/index.astro?astro&type=script&index=0&lang.ts":"_astro/index.astro_astro_type_script_index_0_lang.BPfavyMQ.js","C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/src/pages/reset-password.astro?astro&type=script&index=0&lang.ts":"_astro/reset-password.astro_astro_type_script_index_0_lang.DvAOgISy.js","astro:scripts/before-hydration.js":""},"inlinedScripts":[["C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/src/pages/index.astro?astro&type=script&index=0&lang.ts","var e=document.getElementById(`login-form`),t=document.getElementById(`login-btn`),n=document.getElementById(`login-error`),r=document.getElementById(`auth-switch`),i=document.getElementById(`auth-switch-text`),a=document.getElementById(`forgot-password-btn`),o=document.getElementById(`auth-title`),s=document.getElementById(`auth-subtitle`),c=document.getElementById(`submit-label`),l=document.getElementById(`google-container`),u=document.getElementById(`password-field`),d=document.getElementById(`password`),f=document.getElementById(`confirm-password-field`),p=document.getElementById(`confirm-password`),m=e?.dataset.redirect||`/dashboard`;function h(t){e.dataset.mode=t,n.classList.add(`hidden`),t===`login`?(o.textContent=`Iniciar Sesión`,s.textContent=`Ingrese sus credenciales para acceder al panel`,c.textContent=`Ingresar`,i.textContent=`¿No tienes una cuenta?`,r.textContent=`Crear una cuenta`,l.classList.remove(`hidden`),u.classList.remove(`hidden`),f.classList.add(`hidden`),d.required=!0,p.required=!1):t===`signup`?(o.textContent=`Crear una cuenta`,s.textContent=`Regístrese para acceder al panel`,c.textContent=`Crear cuenta`,i.textContent=`¿Ya tienes una cuenta?`,r.textContent=`Iniciar sesión`,l.classList.remove(`hidden`),u.classList.remove(`hidden`),f.classList.remove(`hidden`),d.required=!0,p.required=!0):t===`forgot`&&(o.textContent=`Restablecer Contraseña`,s.textContent=`Ingrese su correo electrónico para recibir las instrucciones de recuperación`,c.textContent=`Enviar enlace de recuperación`,i.textContent=`¿Recordaste tu contraseña?`,r.textContent=`Volver a iniciar sesión`,l.classList.add(`hidden`),u.classList.add(`hidden`),f.classList.add(`hidden`),d.required=!1,p.required=!1)}r?.addEventListener(`click`,()=>{let t=e.dataset.mode;h(t===`forgot`||t===`signup`?`login`:`signup`)}),a?.addEventListener(`click`,()=>{h(`forgot`)}),e?.addEventListener(`submit`,async r=>{r.preventDefault(),n.classList.add(`hidden`),n.textContent=``;let i=e.email.value.trim(),a=e.password.value,o=e.dataset.mode;if(!i){n.textContent=`Por favor ingrese su correo electrónico`,n.className=`mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm`,n.classList.remove(`hidden`);return}if(o!==`forgot`&&!a){n.textContent=`Por favor ingrese su contraseña`,n.className=`mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm`,n.classList.remove(`hidden`);return}if(o===`signup`&&a!==p.value){n.textContent=`Las contraseñas no coinciden`,n.className=`mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm`,n.classList.remove(`hidden`);return}t.disabled=!0,c.textContent=o===`login`?`Ingresando...`:o===`signup`?`Creando cuenta...`:`Enviando...`;try{let t=`/api/auth/login`,r={email:i,password:a};o===`signup`?t=`/api/auth/signup`:o===`forgot`&&(t=`/api/auth/forgot-password`,r={email:i});let s=await fetch(t,{method:`POST`,headers:{\"Content-Type\":`application/json`},body:JSON.stringify(r)}),c=await s.text(),l={};if(c)try{l=JSON.parse(c)}catch{l={error:`Respuesta del servidor no válida`}}if(!s.ok)throw Error(l.error||`Error en la solicitud`);o===`login`?window.location.href=m:o===`signup`?l.session?window.location.href=m:(n.textContent=`¡Cuenta creada con éxito! Si requiere confirmación por email, revisa tu correo.`,n.className=`mt-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm`,n.classList.remove(`hidden`),e.reset()):o===`forgot`&&(n.textContent=l.message||`Le hemos enviado un correo con instrucciones para restablecer su contraseña.`,n.className=`mt-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm`,n.classList.remove(`hidden`))}catch(e){n.textContent=e instanceof Error?e.message:`Error de autenticación`,n.className=`mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm`,n.classList.remove(`hidden`)}finally{t.disabled=!1,c.textContent=o===`login`?`Ingresar`:o===`signup`?`Crear cuenta`:`Enviar enlace de recuperación`}});"]],"assets":["/Logo-Instituto-Antipobreza-Argentina.png","/_astro/reset-password.astro_astro_type_script_index_0_lang.DvAOgISy.js","/_astro/Layout.D2J32PI1.css"],"buildFormat":"directory","checkOrigin":true,"actionBodySizeLimit":1048576,"serverIslandBodySizeLimit":1048576,"allowedDomains":[],"key":"druNuY/e2cvYhjQRDSqmdfNzAUWBmOqfFzjo5tiZGrY=","image":{},"devToolbar":{"enabled":false,"debugInfoOutput":""},"logLevel":"info","shouldInjectCspMetaTags":false});
+var _manifest = deserializeManifest({"rootDir":"file:///C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/","cacheDir":"file:///C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/node_modules/.astro/","outDir":"file:///C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/dist/","srcDir":"file:///C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/src/","publicDir":"file:///C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/public/","buildClientDir":"file:///C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/dist/client/","buildServerDir":"file:///C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/dist/server/","adapterName":"@astrojs/vercel","assetsDir":"_astro","routes":[{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"type":"page","component":"_server-islands.astro","params":["name"],"segments":[[{"content":"_server-islands","dynamic":false,"spread":false}],[{"content":"name","dynamic":true,"spread":false}]],"pattern":"^\\/_server-islands\\/([^/]+?)\\/?$","prerender":false,"isIndex":false,"fallbackRoutes":[],"route":"/_server-islands/[name]","origin":"internal","distURL":[],"_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/_image","component":"node_modules/astro/dist/assets/endpoint/generic.js","params":[],"pathname":"/_image","pattern":"^\\/_image\\/?$","segments":[[{"content":"_image","dynamic":false,"spread":false}]],"type":"endpoint","prerender":false,"fallbackRoutes":[],"distURL":[],"isIndex":false,"origin":"internal","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[{"type":"external","src":"_astro/Layout.CZKSb77q.css"}],"routeData":{"route":"/admin","isIndex":false,"type":"page","pattern":"^\\/admin\\/?$","segments":[[{"content":"admin","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/admin.astro","pathname":"/admin","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/auth/callback","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/auth\\/callback\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"auth","dynamic":false,"spread":false}],[{"content":"callback","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/auth/callback.ts","pathname":"/api/auth/callback","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/auth/create-user","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/auth\\/create-user\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"auth","dynamic":false,"spread":false}],[{"content":"create-user","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/auth/create-user.ts","pathname":"/api/auth/create-user","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/auth/forgot-password","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/auth\\/forgot-password\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"auth","dynamic":false,"spread":false}],[{"content":"forgot-password","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/auth/forgot-password.ts","pathname":"/api/auth/forgot-password","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/auth/google","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/auth\\/google\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"auth","dynamic":false,"spread":false}],[{"content":"google","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/auth/google.ts","pathname":"/api/auth/google","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/auth/login","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/auth\\/login\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"auth","dynamic":false,"spread":false}],[{"content":"login","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/auth/login.ts","pathname":"/api/auth/login","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/auth/logout","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/auth\\/logout\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"auth","dynamic":false,"spread":false}],[{"content":"logout","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/auth/logout.ts","pathname":"/api/auth/logout","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/auth/me","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/auth\\/me\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"auth","dynamic":false,"spread":false}],[{"content":"me","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/auth/me.ts","pathname":"/api/auth/me","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/auth/signup","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/auth\\/signup\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"auth","dynamic":false,"spread":false}],[{"content":"signup","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/auth/signup.ts","pathname":"/api/auth/signup","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/auth/update-password","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/auth\\/update-password\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"auth","dynamic":false,"spread":false}],[{"content":"update-password","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/auth/update-password.ts","pathname":"/api/auth/update-password","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/videos/sections","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/videos\\/sections\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"videos","dynamic":false,"spread":false}],[{"content":"sections","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/videos/sections.ts","pathname":"/api/videos/sections","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/videos/storage","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/videos\\/storage\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"videos","dynamic":false,"spread":false}],[{"content":"storage","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/videos/storage.ts","pathname":"/api/videos/storage","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/videos/upload","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/videos\\/upload\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"videos","dynamic":false,"spread":false}],[{"content":"upload","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/videos/upload.ts","pathname":"/api/videos/upload","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[{"type":"external","src":"_astro/Layout.CZKSb77q.css"}],"routeData":{"route":"/dashboard","isIndex":false,"type":"page","pattern":"^\\/dashboard\\/?$","segments":[[{"content":"dashboard","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/dashboard.astro","pathname":"/dashboard","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[{"type":"external","src":"_astro/Layout.CZKSb77q.css"}],"routeData":{"route":"/","isIndex":true,"type":"page","pattern":"^\\/$","segments":[],"params":[],"component":"src/pages/index.astro","pathname":"/","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}}],"serverLike":true,"middlewareMode":"classic","base":"/","trailingSlash":"ignore","compressHTML":"jsx","componentMetadata":[["C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/src/pages/admin.astro",{"propagation":"none","containsHead":true}],["C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/src/pages/dashboard.astro",{"propagation":"none","containsHead":true}],["C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/src/pages/index.astro",{"propagation":"none","containsHead":true}]],"renderers":[],"clientDirectives":[["idle","(()=>{var l=(n,t)=>{let i=async()=>{await(await n())()},e=typeof t.value==\"object\"?t.value:void 0,s={timeout:e==null?void 0:e.timeout};\"requestIdleCallback\"in window?window.requestIdleCallback(i,s):setTimeout(i,s.timeout||200)};(self.Astro||(self.Astro={})).idle=l;window.dispatchEvent(new Event(\"astro:idle\"));})();"],["load","(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event(\"astro:load\"));})();"],["media","(()=>{var n=(a,t)=>{let i=async()=>{await(await a())()};if(t.value){let e=matchMedia(t.value);e.matches?i():e.addEventListener(\"change\",i,{once:!0})}};(self.Astro||(self.Astro={})).media=n;window.dispatchEvent(new Event(\"astro:media\"));})();"],["only","(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).only=e;window.dispatchEvent(new Event(\"astro:only\"));})();"],["visible","(()=>{var a=(s,i,o)=>{let r=async()=>{await(await s())()},t=typeof i.value==\"object\"?i.value:void 0,c={rootMargin:t==null?void 0:t.rootMargin},n=new IntersectionObserver(e=>{for(let l of e)if(l.isIntersecting){n.disconnect(),r();break}},c);for(let e of o.children)n.observe(e)};(self.Astro||(self.Astro={})).visible=a;window.dispatchEvent(new Event(\"astro:visible\"));})();"]],"entryModules":{"astro/entrypoints/prerender":"prerender-entry.DfeCWEWM.mjs","\u0000virtual:astro:middleware":"virtual_astro_middleware.mjs","\u0000virtual:astro:server-island-manifest":"chunks/_virtual_astro_server-island-manifest_C1Q2srgE.mjs","\u0000virtual:astro:session-driver":"chunks/_virtual_astro_session-driver_C-PI1Pas.mjs","\u0000virtual:astro:actions/noop-entrypoint":"chunks/noop-entrypoint_Z3zFhrGC.mjs","@astrojs/vercel/entrypoint":"entry.mjs","\u0000virtual:astro:page:src/pages/admin@_@astro":"chunks/admin_DIKP1SUl.mjs","\u0000virtual:astro:page:src/pages/api/auth/callback@_@ts":"chunks/callback_BFCIU1hI.mjs","\u0000virtual:astro:page:src/pages/api/auth/create-user@_@ts":"chunks/create-user_DUGixkhU.mjs","\u0000virtual:astro:page:src/pages/dashboard@_@astro":"chunks/dashboard_CnL6lAd-.mjs","\u0000virtual:astro:page:src/pages/api/auth/forgot-password@_@ts":"chunks/forgot-password_Ctss57o4.mjs","\u0000virtual:astro:page:node_modules/astro/dist/assets/endpoint/generic@_@js":"chunks/generic_Cv6V5OXw.mjs","\u0000virtual:astro:page:src/pages/api/auth/google@_@ts":"chunks/google_DiltT7DW.mjs","\u0000virtual:astro:page:src/pages/index@_@astro":"chunks/index_B5cVGOCf.mjs","\u0000virtual:astro:page:src/pages/api/auth/login@_@ts":"chunks/login_DXkBLYxb.mjs","\u0000virtual:astro:page:src/pages/api/auth/logout@_@ts":"chunks/logout_iJdE5xXl.mjs","\u0000virtual:astro:page:src/pages/api/auth/me@_@ts":"chunks/me_BDTG2325.mjs","\u0000virtual:astro:page:src/pages/api/videos/sections@_@ts":"chunks/sections_C1k3O4r1.mjs","C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/node_modules/astro/dist/assets/services/sharp.js":"chunks/sharp_CPuifg9t.mjs","\u0000virtual:astro:page:src/pages/api/auth/signup@_@ts":"chunks/signup_gWPbJCIU.mjs","\u0000virtual:astro:page:src/pages/api/videos/storage@_@ts":"chunks/storage_Dn7pQogk.mjs","\u0000virtual:astro:page:src/pages/api/auth/update-password@_@ts":"chunks/update-password_DrdJUSR1.mjs","\u0000virtual:astro:page:src/pages/api/videos/upload@_@ts":"chunks/upload_BVccUr-0.mjs","C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/src/pages/index.astro?astro&type=script&index=0&lang.ts":"_astro/index.astro_astro_type_script_index_0_lang.ChvnpT6_.js","astro:scripts/before-hydration.js":""},"inlinedScripts":[["C:/Users/ndiaz/Documents/workspace/GitHub/masters/AntiPobrez/ProyectoAnti/src/pages/index.astro?astro&type=script&index=0&lang.ts","var e=document.getElementById(`login-form`),t=document.getElementById(`login-btn`),n=document.getElementById(`login-error`),r=document.getElementById(`submit-label`),i=e?.dataset.redirect||`/dashboard`;e?.addEventListener(`submit`,async a=>{a.preventDefault(),n.classList.add(`hidden`),n.textContent=``;let o=e.email.value.trim(),s=e.password.value;if(!o){n.textContent=`Por favor ingrese su correo electrónico`,n.className=`mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm`,n.classList.remove(`hidden`);return}if(!s){n.textContent=`Por favor ingrese su contraseña`,n.className=`mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm`,n.classList.remove(`hidden`);return}t.disabled=!0,r.textContent=`Ingresando...`;try{let e=await fetch(`/api/auth/login`,{method:`POST`,headers:{\"Content-Type\":`application/json`},body:JSON.stringify({email:o,password:s})}),t=await e.text(),n={};if(t)try{n=JSON.parse(t)}catch{n={error:`Respuesta del servidor no válida`}}if(!e.ok)throw Error(n.error||`Error en la solicitud`);window.location.href=i}catch(e){n.textContent=e instanceof Error?e.message:`Error de autenticación`,n.className=`mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm`,n.classList.remove(`hidden`)}finally{t.disabled=!1,r.textContent=`Ingresar`}});"]],"assets":["/Logo-Instituto-Antipobreza-Argentina.png","/_astro/Layout.CZKSb77q.css"],"buildFormat":"directory","checkOrigin":true,"actionBodySizeLimit":1048576,"serverIslandBodySizeLimit":1048576,"allowedDomains":[],"key":"MHgTvjYV7rKMPT480O/I3hsd+euwmvrqqk+ZeFljMuY=","image":{},"devToolbar":{"enabled":false,"debugInfoOutput":""},"logLevel":"info","shouldInjectCspMetaTags":false});
 var manifestRoutes = _manifest.routes;
 var manifest = Object.assign(_manifest, {
 	renderers,
@@ -3928,7 +4084,7 @@ var entrypoint_default = { async fetch(request) {
 	const hasValidMiddlewareSecret = request.headers.get(ASTRO_MIDDLEWARE_SECRET_HEADER) === middlewareSecret;
 	let realPath = void 0;
 	if (hasValidMiddlewareSecret) realPath = request.headers.get(ASTRO_PATH_HEADER);
-	else if (url.searchParams.get("x_astro_path_token") === "e3f2a908-06ff-4f5a-ac5e-9f2d8201101f") realPath = url.searchParams.get(ASTRO_PATH_PARAM);
+	else if (url.searchParams.get("x_astro_path_token") === "d93c0e19-3ec4-42eb-a0d2-973fd818fb95") realPath = url.searchParams.get(ASTRO_PATH_PARAM);
 	if (typeof realPath === "string") {
 		const target = new URL(realPath, url);
 		const search = target.search || url.search;

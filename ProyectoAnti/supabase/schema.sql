@@ -4,10 +4,11 @@
 
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
-  email text,
+  email text unique,
   full_name text,
   avatar_url text,
   role text default 'user',
+  is_admin boolean default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -63,4 +64,59 @@ select
   raw_user_meta_data ->> 'avatar_url'
 from auth.users
 on conflict (id) do nothing;
+
+-- Tabla de Secciones de Videos
+create table if not exists public.sections (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  description text,
+  display_order int not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.sections enable row level security;
+
+drop policy if exists "Authenticated users can read sections" on public.sections;
+create policy "Authenticated users can read sections"
+  on public.sections for select
+  to authenticated
+  using (true);
+
+drop policy if exists "Authenticated users can write sections" on public.sections;
+create policy "Authenticated users can write sections"
+  on public.sections for all
+  to authenticated
+  using (true)
+  with check (true);
+
+-- Tabla de Videos
+create table if not exists public.videos (
+  id uuid primary key default gen_random_uuid(),
+  section_id uuid not null references public.sections(id) on delete cascade,
+  title text not null,
+  description text,
+  video_url text not null,
+  thumbnail_url text,
+  duration int,
+  display_order int not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.videos enable row level security;
+
+drop policy if exists "Authenticated users can read videos" on public.videos;
+create policy "Authenticated users can read videos"
+  on public.videos for select
+  to authenticated
+  using (true);
+
+drop policy if exists "Authenticated users can write videos" on public.videos;
+create policy "Authenticated users can write videos"
+  on public.videos for all
+  to authenticated
+  using (true)
+  with check (true);
+
 
