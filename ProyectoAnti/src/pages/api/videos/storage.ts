@@ -17,7 +17,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     }
 
     const { data: { user }, error: userError } = await supabase.auth.getUser(accessToken)
-    const isAdmin = await isUserAdmin(user)
+    const isAdmin = await isUserAdmin(user, accessToken)
 
     if (userError || !user || !isAdmin) {
       return new Response(JSON.stringify({ error: 'No tienes permisos' }), {

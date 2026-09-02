@@ -3,7 +3,8 @@ import Layout from "../layouts/Layout.astro";
 import { isUserAdmin } from "../lib/auth";
 
 const user = Astro.locals.user;
-const isAdmin = await isUserAdmin(user);
+const accessToken = Astro.cookies.get('sb-access-token')?.value;
+const isAdmin = await isUserAdmin(user, accessToken);
 ---
 
 <Layout>

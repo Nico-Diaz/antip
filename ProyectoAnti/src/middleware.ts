@@ -77,7 +77,7 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   }
 
   if (pathname.startsWith('/admin')) {
-    const adminPermitted = await isUserAdmin(user)
+    const adminPermitted = await isUserAdmin(user, accessToken)
     if (!adminPermitted) {
       return redirect('/dashboard')
     }
