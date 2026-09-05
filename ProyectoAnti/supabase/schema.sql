@@ -71,6 +71,7 @@ create table if not exists public.sections (
   title text not null,
   description text,
   display_order int not null default 0,
+  is_published boolean default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -100,6 +101,7 @@ create table if not exists public.videos (
   thumbnail_url text,
   duration int,
   display_order int not null default 0,
+  is_published boolean default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -119,4 +121,78 @@ create policy "Authenticated users can write videos"
   using (true)
   with check (true);
 
+-- Progreso del Usuario por Video
+create table if not exists public.user_video_progress (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  video_id uuid not null references public.videos(id) on delete cascade,
+  watched_time numeric not null default 0,
+  is_completed boolean default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique(user_id, video_id)
+);
 
+alter table public.user_video_progress enable row level security;
+
+drop policy if exists "Users can read their own progress" on public.user_video_progress;
+create policy "Users can read their own progress"
+  on public.user_video_progress for select
+  to authenticated
+  using (auth.uid() = user_id);
+
+drop policy if exists "Users can update their own progress" on public.user_video_progress;
+create policy "Users can update their own progress"
+  on public.user_video_progress for all
+  to authenticated
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+-- Adjuntos de Video
+create table if not exists public.video_attachments (
+  id uuid primary key default gen_random_uuid(),
+  video_id uuid not null references public.videos(id) on delete cascade,
+  title text not null,
+  file_url text not null,
+  file_type text,
+  created_at timestamptz not null default now()
+);
+
+alter table public.video_attachments enable row level security;
+
+drop policy if exists "Authenticated users can read attachments" on public.video_attachments;
+create policy "Authenticated users can read attachments"
+  on public.video_attachments for select
+  to authenticated
+  using (true);
+
+drop policy if exists "Admin can write attachments" on public.video_attachments;
+create policy "Admin can write attachments"
+  on public.video_attachments for all
+  to authenticated
+  using (true)
+  with check (true);
+
+-- Favoritos del Usuario
+create table if not exists public.user_favorites (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  video_id uuid not null references public.videos(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  unique(user_id, video_id)
+);
+
+alter table public.user_favorites enable row level security;
+
+drop policy if exists "Users can read their own favorites" on public.user_favorites;
+create policy "Users can read their own favorites"
+  on public.user_favorites for select
+  to authenticated
+  using (auth.uid() = user_id);
+
+drop policy if exists "Users can update their own favorites" on public.user_favorites;
+create policy "Users can update their own favorites"
+  on public.user_favorites for all
+  to authenticated
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);

@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro'
-import { supabase } from '../../../lib/supabase'
+import { supabase, getAuthClient } from '../../../lib/supabase'
 import { isUserAdmin } from '../../../lib/auth'
 
 export const POST: APIRoute = async ({ request, cookies }) => {
@@ -41,7 +41,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     }
 
     // Verificar que la sección existe
-    const { data: section, error: sectionError } = await supabase
+    const { data: section, error: sectionError } = await getAuthClient(accessToken)
       .from('sections')
       .select('id')
       .eq('id', section_id)
@@ -55,7 +55,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     }
 
     // Obtener el orden máximo para esta sección
-    const { data: videos } = await supabase
+    const { data: videos } = await getAuthClient(accessToken)
       .from('videos')
       .select('display_order')
       .eq('section_id', section_id)
@@ -64,7 +64,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
     const maxOrder = videos && videos.length > 0 ? videos[0].display_order : -1
 
-    const { data, error } = await supabase
+    const { data, error } = await getAuthClient(accessToken)
       .from('videos')
       .insert({
         section_id,
@@ -95,11 +95,19 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   }
 }
 
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ url, cookies }) => {
   try {
+    const accessToken = cookies.get('sb-access-token')?.value
+    if (!accessToken) {
+      return new Response(JSON.stringify({ error: 'No autenticado' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
     const sectionId = url.searchParams.get('section_id')
 
-    let query = supabase.from('videos').select('*').order('display_order', { ascending: true })
+    let query = getAuthClient(accessToken).from('videos').select('*').order('display_order', { ascending: true })
 
     if (sectionId) {
       query = query.eq('section_id', sectionId)
@@ -154,7 +162,7 @@ export const DELETE: APIRoute = async ({ cookies, url }) => {
       })
     }
 
-    const { error } = await supabase
+    const { error } = await getAuthClient(accessToken)
       .from('videos')
       .delete()
       .eq('id', videoId)

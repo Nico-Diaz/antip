@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro'
-import { supabase } from '../../../lib/supabase'
+import { supabase, getAuthClient } from '../../../lib/supabase'
 import { isUserAdmin } from '../../../lib/auth'
 
 export const POST: APIRoute = async ({ request, cookies }) => {
@@ -41,7 +41,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     }
 
     // Obtener el orden máximo actual
-    const { data: sections, error: orderError } = await supabase
+    const { data: sections, error: orderError } = await getAuthClient(accessToken)
       .from('sections')
       .select('display_order')
       .order('display_order', { ascending: false })
@@ -49,7 +49,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
     const maxOrder = sections && sections.length > 0 ? sections[0].display_order : -1
 
-    const { data, error } = await supabase
+    const { data, error } = await getAuthClient(accessToken)
       .from('sections')
       .insert({
         title,
@@ -78,7 +78,15 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
 export const GET: APIRoute = async ({ cookies }) => {
   try {
-    const { data, error } = await supabase
+    const accessToken = cookies.get('sb-access-token')?.value
+    if (!accessToken) {
+      return new Response(JSON.stringify({ error: 'No autenticado' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    const { data, error } = await getAuthClient(accessToken)
       .from('sections')
       .select('*')
       .order('display_order', { ascending: true })
@@ -131,13 +139,13 @@ export const DELETE: APIRoute = async ({ cookies, url }) => {
     }
 
     // Eliminar videos asociados a la sección
-    await supabase
+    await getAuthClient(accessToken)
       .from('videos')
       .delete()
       .eq('section_id', sectionId)
 
     // Eliminar la sección
-    const { error } = await supabase
+    const { error } = await getAuthClient(accessToken)
       .from('sections')
       .delete()
       .eq('id', sectionId)

@@ -7,4 +7,19 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.warn('[Supabase Config Warning]: Faltan las variables de entorno PUBLIC_SUPABASE_URL y PUBLIC_SUPABASE_ANON_KEY en Vercel.')
 }
 
+// Cliente default (anon)
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+// Cliente autenticado para pasar RLS
+export const getAuthClient = (accessToken: string) => {
+  return createClient(supabaseUrl, supabaseAnonKey, {
+    global: {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    },
+    auth: {
+      persistSession: false
+    }
+  })
+}

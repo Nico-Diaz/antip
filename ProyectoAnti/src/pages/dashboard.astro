@@ -119,7 +119,17 @@ const isAdmin = await isUserAdmin(user, accessToken);
       <div class="p-6 bg-slate-900 border-t border-slate-800 overflow-y-auto">
         <h4 class="text-white font-semibold mb-1 text-base" id="modal-video-subtitle"></h4>
         <p id="modal-video-desc" class="text-slate-300 text-sm leading-relaxed whitespace-pre-line"></p>
-        <div class="mt-4 pt-4 border-t border-slate-800 flex justify-end">
+        <div class="mt-4 pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <button id="mark-completed-btn" class="bg-green-600 hover:bg-green-500 text-white text-sm font-semibold py-2 px-4 rounded-xl flex items-center gap-2 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              Marcar Completado
+            </button>
+            <button id="mark-favorite-btn" class="bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold py-2 px-4 rounded-xl flex items-center gap-2 transition-colors border border-slate-700">
+              <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              Guardar
+            </button>
+          </div>
           <a
             id="modal-external-link"
             href="#"
@@ -127,9 +137,13 @@ const isAdmin = await isUserAdmin(user, accessToken);
             rel="noopener noreferrer"
             class="text-xs text-[#0073CF] hover:underline flex items-center gap-1"
           >
-            Abrir enlace original en pestaña nueva
+            Enlace original
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
           </a>
+        </div>
+        <div id="modal-attachments-container" class="mt-4 pt-4 border-t border-slate-800 hidden">
+          <h5 class="text-white text-sm font-semibold mb-3">Recursos Adjuntos</h5>
+          <div id="modal-attachments-list" class="flex flex-col gap-2"></div>
         </div>
       </div>
     </div>
@@ -191,7 +205,11 @@ const isAdmin = await isUserAdmin(user, accessToken);
       return '<video src="' + videoUrl + '" controls autoplay playsinline class="w-full h-full object-contain bg-black"></video>';
     }
 
+    let currentModalVideo = null;
+    let videoProgressInterval = null;
+
     function openModal(video) {
+      currentModalVideo = video;
       modalTitle.textContent = video.title;
       modalSubtitle.textContent = video.title;
       modalDesc.textContent = video.description || 'Sin descripción disponible.';
@@ -207,9 +225,63 @@ const isAdmin = await isUserAdmin(user, accessToken);
         modal.querySelector('.transform').classList.add('scale-100');
       }, 10);
       document.body.style.overflow = 'hidden';
+
+      // Fetch attachments
+      fetch('/api/videos/attachments?video_id=' + video.id)
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById('modal-attachments-container');
+          const list = document.getElementById('modal-attachments-list');
+          if (data.attachments && data.attachments.length > 0) {
+            container.classList.remove('hidden');
+            let html = '';
+            data.attachments.forEach(att => {
+              html += '<a href="' + att.file_url + '" target="_blank" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm py-3 px-4 rounded-xl transition-colors border border-slate-700 group">';
+              html += '<svg class="w-5 h-5 text-[#0073CF] group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>';
+              html += '<span class="flex-1 font-medium">' + att.title + '</span>';
+              html += '</a>';
+            });
+            list.innerHTML = html;
+          } else {
+            container.classList.add('hidden');
+            list.innerHTML = '';
+          }
+        });
+
+      // Auto-save progress for native video tags
+      const nativeVideo = modalContainer.querySelector('video');
+      if (nativeVideo) {
+        // Fetch existing progress to resume
+        fetch('/api/videos/progress')
+          .then(res => res.json())
+          .then(data => {
+            if (data.progress) {
+              const prog = data.progress.find(p => p.video_id === video.id);
+              if (prog && prog.watched_time) {
+                nativeVideo.currentTime = prog.watched_time;
+              }
+            }
+          });
+
+        videoProgressInterval = setInterval(() => {
+          fetch('/api/videos/progress', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              video_id: video.id,
+              watched_time: nativeVideo.currentTime
+            })
+          });
+        }, 10000); // Save every 10 seconds
+      }
     }
 
     function closeModal() {
+      if (videoProgressInterval) {
+        clearInterval(videoProgressInterval);
+        videoProgressInterval = null;
+      }
+      currentModalVideo = null;
       modal.classList.add('opacity-0');
       modal.querySelector('.transform').classList.remove('scale-100');
       modal.querySelector('.transform').classList.add('scale-95');
@@ -228,6 +300,60 @@ const isAdmin = await isUserAdmin(user, accessToken);
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
         closeModal();
+      }
+    });
+
+    document.getElementById('mark-completed-btn')?.addEventListener('click', async () => {
+      if (!currentModalVideo) return;
+      const btn = document.getElementById('mark-completed-btn');
+      const originalHtml = btn.innerHTML;
+      btn.innerHTML = 'Guardando...';
+      try {
+        await fetch('/api/videos/progress', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            video_id: currentModalVideo.id,
+            is_completed: true
+          })
+        });
+        btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Guardado!';
+        setTimeout(() => {
+          btn.innerHTML = originalHtml;
+          closeModal();
+          loadDashboard(); // Recargar UI
+        }, 1500);
+      } catch (e) {
+        console.error(e);
+        btn.innerHTML = 'Error';
+      }
+    });
+
+    document.getElementById('mark-favorite-btn')?.addEventListener('click', async () => {
+      if (!currentModalVideo) return;
+      const btn = document.getElementById('mark-favorite-btn');
+      const originalHtml = btn.innerHTML;
+      btn.innerHTML = 'Guardando...';
+      try {
+        const res = await fetch('/api/videos/favorites', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            video_id: currentModalVideo.id
+          })
+        });
+        const data = await res.json();
+        if (data.action === 'added') {
+          btn.innerHTML = '<svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> Guardado!';
+        } else {
+          btn.innerHTML = '<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg> Eliminado';
+        }
+        setTimeout(() => {
+          btn.innerHTML = originalHtml;
+        }, 1500);
+      } catch (e) {
+        console.error(e);
+        btn.innerHTML = 'Error';
       }
     });
 
@@ -260,8 +386,19 @@ const isAdmin = await isUserAdmin(user, accessToken);
 
     async function loadDashboard() {
       try {
-        const sectionsRes = await fetch('/api/videos/sections');
+        const [sectionsRes, progressRes] = await Promise.all([
+          fetch('/api/videos/sections'),
+          fetch('/api/videos/progress')
+        ]);
         const sectionsData = await safeFetchJson(sectionsRes);
+        const progressData = await safeFetchJson(progressRes);
+        
+        const progressMap = {};
+        if (progressData.progress) {
+          progressData.progress.forEach(p => {
+            progressMap[p.video_id] = p;
+          });
+        }
 
         if (!sectionsRes.ok || !sectionsData.sections || sectionsData.sections.length === 0) {
           mainSectionsContainer.innerHTML = '<div class="bg-white rounded-2xl p-12 border border-slate-200 text-center"><h3 class="text-lg font-bold text-[#06203D] mb-2">No hay contenidos publicados por el momento</h3><p class="text-slate-500 text-sm">Los videos publicados por la administración aparecerán aquí.</p></div>';
@@ -273,56 +410,93 @@ const isAdmin = await isUserAdmin(user, accessToken);
           const videosRes = await fetch('/api/videos/upload?section_id=' + section.id);
           const videosData = await safeFetchJson(videosRes);
           const videos = videosData.videos || [];
+          
+          let completedInSection = 0;
+          let videosHtml = '';
+
+          // Grilla de Videos (Tarjetas de solo lectura para los usuarios)
+          if (videos.length > 0) {
+            videosHtml += '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">';
+            videos.forEach(function(video) {
+              const thumb = getThumbnailUrl(video.video_url, video.thumbnail_url);
+              const jsonVideo = JSON.stringify(video).replace(/'/g, "&apos;").replace(/"/g, '&quot;');
+              
+              const prog = progressMap[video.id];
+              const isCompleted = prog && prog.is_completed;
+              if (isCompleted) completedInSection++;
+              
+              let progressPercentage = 0;
+              if (isCompleted) {
+                progressPercentage = 100;
+              } else if (prog && prog.watched_time && video.duration) {
+                progressPercentage = Math.min(100, Math.round((prog.watched_time / video.duration) * 100));
+              }
+
+              videosHtml += '<div class="bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group video-card" data-title="' + video.title.toLowerCase() + '" data-desc="' + (video.description || '').toLowerCase() + '">';
+              
+              // Aspect ratio preview
+              videosHtml += '<div class="aspect-video bg-slate-900 relative overflow-hidden cursor-pointer play-trigger" data-video=\'' + jsonVideo + '\'>';
+              if (thumb) {
+                videosHtml += '<img src="' + thumb + '" alt="' + video.title + '" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />';
+              } else {
+                videosHtml += '<div class="w-full h-full bg-gradient-to-br from-[#06203D] to-[#0073CF] flex items-center justify-center"><svg class="w-14 h-14 text-white/40" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg></div>';
+              }
+              
+              if (isCompleted) {
+                videosHtml += '<div class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-md flex items-center gap-1 shadow-md"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Completado</div>';
+              }
+
+              // Play Overlay
+              videosHtml += '<div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all flex items-center justify-center">';
+              videosHtml += '<div class="w-14 h-14 rounded-full bg-[#0073CF] text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300"><svg class="w-7 h-7 ml-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg></div></div>';
+              
+              // ProgressBar overlay
+              if (progressPercentage > 0) {
+                videosHtml += '<div class="absolute bottom-0 left-0 right-0 h-1.5 bg-slate-800/80"><div class="h-full ' + (isCompleted ? 'bg-green-500' : 'bg-[#0073CF]') + '" style="width: ' + progressPercentage + '%"></div></div>';
+              }
+
+              videosHtml += '</div>';
+
+              // Card Info
+              videosHtml += '<div class="p-5 flex-1 flex flex-col justify-between space-y-4">';
+              videosHtml += '<div><h3 class="font-bold text-[#06203D] text-lg leading-snug group-hover:text-[#0073CF] transition-colors">' + video.title + '</h3>';
+              if (video.description) {
+                videosHtml += '<p class="text-slate-600 text-sm mt-2 line-clamp-2 leading-relaxed">' + video.description + '</p>';
+              }
+              videosHtml += '</div>';
+
+              videosHtml += '<button class="w-full bg-[#06203D] hover:bg-[#0073CF] text-white font-semibold py-2.5 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-sm play-trigger text-sm" data-video=\'' + jsonVideo + '\'>';
+              videosHtml += '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg> ' + (prog?.watched_time > 0 && !isCompleted ? 'Continuar Viendo' : 'Reproducir Video') + '</button>';
+
+              videosHtml += '</div></div>';
+            });
+            videosHtml += '</div>';
+          } else {
+            videosHtml += '<p class="text-slate-400 text-sm italic bg-slate-50 p-4 rounded-xl border border-slate-100">No hay videos disponibles en esta sección actualmente.</p>';
+          }
 
           html += '<div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">';
           
           // Header de la Sección
-          html += '<div class="pb-4 border-b border-slate-100"><h2 class="text-2xl font-bold text-[#06203D] flex items-center gap-3">' + section.title;
+          let sectionProgressPercent = videos.length > 0 ? Math.round((completedInSection / videos.length) * 100) : 0;
+          html += '<div class="pb-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">';
+          html += '<div><h2 class="text-2xl font-bold text-[#06203D] flex items-center gap-3">' + section.title;
           html += '<span class="text-xs font-semibold bg-slate-100 text-slate-700 px-3 py-1 rounded-full border border-slate-200">' + videos.length + ' video' + (videos.length === 1 ? '' : 's') + '</span></h2>';
           if (section.description) {
             html += '<p class="text-slate-500 text-sm mt-1">' + section.description + '</p>';
           }
           html += '</div>';
 
-          // Grilla de Videos (Tarjetas de solo lectura para los usuarios)
           if (videos.length > 0) {
-            html += '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">';
-            videos.forEach(function(video) {
-              const thumb = getThumbnailUrl(video.video_url, video.thumbnail_url);
-              const jsonVideo = JSON.stringify(video).replace(/'/g, "&apos;").replace(/"/g, '&quot;');
-
-              html += '<div class="bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group video-card" data-title="' + video.title.toLowerCase() + '" data-desc="' + (video.description || '').toLowerCase() + '">';
-              
-              // Aspect ratio preview
-              html += '<div class="aspect-video bg-slate-900 relative overflow-hidden cursor-pointer play-trigger" data-video=\'' + jsonVideo + '\'>';
-              if (thumb) {
-                html += '<img src="' + thumb + '" alt="' + video.title + '" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />';
-              } else {
-                html += '<div class="w-full h-full bg-gradient-to-br from-[#06203D] to-[#0073CF] flex items-center justify-center"><svg class="w-14 h-14 text-white/40" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg></div>';
-              }
-
-              // Play Overlay
-              html += '<div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all flex items-center justify-center">';
-              html += '<div class="w-14 h-14 rounded-full bg-[#0073CF] text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300"><svg class="w-7 h-7 ml-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg></div></div></div>';
-
-              // Card Info
-              html += '<div class="p-5 flex-1 flex flex-col justify-between space-y-4">';
-              html += '<div><h3 class="font-bold text-[#06203D] text-lg leading-snug group-hover:text-[#0073CF] transition-colors">' + video.title + '</h3>';
-              if (video.description) {
-                html += '<p class="text-slate-600 text-sm mt-2 line-clamp-2 leading-relaxed">' + video.description + '</p>';
-              }
-              html += '</div>';
-
-              html += '<button class="w-full bg-[#06203D] hover:bg-[#0073CF] text-white font-semibold py-2.5 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-sm play-trigger text-sm" data-video=\'' + jsonVideo + '\'>';
-              html += '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg> Reproducir Video</button>';
-
-              html += '</div></div>';
-            });
+            html += '<div class="flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-xl border border-slate-200">';
+            html += '<div class="flex flex-col items-end gap-1"><span class="text-xs font-semibold text-slate-600">Progreso</span><span class="text-sm font-bold text-[#0073CF]">' + completedInSection + ' / ' + videos.length + ' completados</span></div>';
+            html += '<div class="w-12 h-12 rounded-full flex items-center justify-center relative"><svg class="w-full h-full transform -rotate-90"><circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="4" fill="transparent" class="text-slate-200" /><circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="4" fill="transparent" stroke-dasharray="' + (2 * Math.PI * 20) + '" stroke-dashoffset="' + ((2 * Math.PI * 20) * (1 - sectionProgressPercent / 100)) + '" class="text-[#0073CF] transition-all duration-1000" /></svg><span class="absolute text-xs font-bold text-[#06203D]">' + sectionProgressPercent + '%</span></div>';
             html += '</div>';
-          } else {
-            html += '<p class="text-slate-400 text-sm italic bg-slate-50 p-4 rounded-xl border border-slate-100">No hay videos disponibles en esta sección actualmente.</p>';
           }
 
+          html += '</div>';
+
+          html += videosHtml;
           html += '</div>';
         }
 
