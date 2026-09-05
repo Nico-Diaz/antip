@@ -247,6 +247,70 @@ if (!user || !isAdmin) {
 
     const adminSectionsContainer = document.getElementById('admin-sections-container');
     const sectionForm = document.getElementById('create-section-form');
+    async function safeFetchJson(res, defaultErrorMsg = 'Error en la petición') {
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        if (!res.ok) {
+          if (res.status === 413) {
+            throw new Error('El archivo excede el límite de 4.5 MB de Vercel. Por favor seleccione un archivo de menor peso o utilice la opción de pegar URL.');
+          }
+          throw new Error(`Error del servidor (${res.status}): ${text.substring(0, 150) || defaultErrorMsg}`);
+        }
+        throw new Error('La respuesta del servidor no tiene un formato JSON válido.');
+      }
+      return data;
+    }
+
+    async function uploadFileToStorage(file) {
+      // 1. Intentar subida directa mediante URL firmada (omite Vercel y su límite de 4.5MB)
+      try {
+        const signedRes = await fetch('/api/videos/signed-url', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fileName: file.name, fileType: file.type }),
+        });
+
+        if (signedRes.ok) {
+          const signedData = await safeFetchJson(signedRes, 'Error al obtener URL firmada');
+          if (signedData.signedUrl && signedData.publicUrl) {
+            const uploadDirectRes = await fetch(signedData.signedUrl, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': file.type || 'application/octet-stream',
+              },
+              body: file,
+            });
+
+            if (uploadDirectRes.ok) {
+              return signedData.publicUrl;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('[Direct Upload Fallback]:', err);
+      }
+
+      // 2. Fallback a subida mediante la API proxy (para archivos pequeños)
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const storageRes = await fetch('/api/videos/storage', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const storageData = await safeFetchJson(storageRes, 'Error al subir el archivo');
+
+      if (!storageRes.ok || !storageData.publicUrl) {
+        throw new Error(storageData.error || 'Error al subir el archivo a Supabase Storage');
+      }
+
+      return storageData.publicUrl;
+    }
+
     const sectionMessageDiv = document.getElementById('section-message');
 
     sectionForm?.addEventListener('submit', async (e) => {
@@ -263,7 +327,7 @@ if (!user || !isAdmin) {
           body: JSON.stringify({ title, description }),
         });
 
-        const data = await response.json();
+        const data = await safeFetchJson(response, 'Error al crear la sección');
 
         if (response.ok) {
           sectionMessageDiv.className = 'p-4 rounded-xl text-sm bg-green-100 text-green-800 border border-green-200 mt-4';
@@ -285,7 +349,7 @@ if (!user || !isAdmin) {
     async function loadAdminSections() {
       try {
         const sectionsRes = await fetch('/api/videos/sections');
-        const sectionsData = await sectionsRes.json();
+        const sectionsData = await safeFetchJson(sectionsRes, 'Error al obtener secciones');
 
         if (!sectionsRes.ok || !sectionsData.sections || sectionsData.sections.length === 0) {
           adminSectionsContainer.innerHTML = '<div class="bg-white rounded-2xl p-12 border border-slate-200 text-center"><p class="text-slate-500 text-sm">No hay secciones creadas aún. Utilice el formulario superior para crear la primera sección.</p></div>';
@@ -295,23 +359,28 @@ if (!user || !isAdmin) {
         let html = '';
         for (const section of sectionsData.sections) {
           const videosRes = await fetch('/api/videos/upload?section_id=' + section.id);
-          const videosData = await videosRes.json();
+          const videosData = await safeFetchJson(videosRes, 'Error al obtener videos');
           const videos = videosData.videos || [];
 
-          html += '<div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6" id="admin-section-' + section.id + '">';
+          html += '<div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6 transition-all" id="admin-section-' + section.id + '">';
           
-          // Encabezado de la sección
-          html += '<div class="flex items-start justify-between gap-4 pb-4 border-b border-slate-100">';
+          // Encabezado de la sección (con botón e icono para minimizar/expandir)
+          html += '<div class="flex items-start justify-between gap-4 pb-4 border-b border-slate-100 cursor-pointer select-none toggle-section-header" data-section-id="' + section.id + '">';
+          html += '<div class="flex items-center gap-3"><svg class="chevron-icon w-6 h-6 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>';
           html += '<div><h3 class="text-xl font-bold text-[#06203D]">' + section.title + '</h3>';
           if (section.description) {
             html += '<p class="text-slate-500 text-sm mt-1">' + section.description + '</p>';
           }
-          html += '</div>';
+          html += '</div></div>';
 
-          html += '<div class="flex items-center gap-3 shrink-0">';
+          html += '<div class="flex items-center gap-3 shrink-0" onclick="event.stopPropagation()">';
           html += '<span class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-200">' + videos.length + ' videos</span>';
+          html += '<button class="toggle-section-btn bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-1.5 rounded-xl text-xs transition border border-slate-300 flex items-center gap-1" data-section-id="' + section.id + '"><span class="toggle-text">Minimizar</span></button>';
           html += '<button class="delete-section-btn bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-semibold px-3.5 py-1.5 rounded-xl text-xs transition flex items-center gap-1" data-section-id="' + section.id + '"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> Eliminar Sección</button>';
           html += '</div></div>';
+
+          // Contenedor del módulo colapsable (Formulario + Lista de videos)
+          html += '<div class="section-content space-y-6" id="section-content-' + section.id + '">';
 
           // Formulario Subir Video + Imagen de Portada en esta sección
           html += '<div class="bg-slate-50 rounded-xl p-6 border border-slate-200"><h4 class="font-bold text-[#06203D] text-sm mb-4 flex items-center gap-2"><svg class="w-4 h-4 text-[#0073CF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Publicar Video en esta Sección</h4>';
@@ -364,10 +433,36 @@ if (!user || !isAdmin) {
             html += '<p class="text-slate-400 text-sm italic bg-slate-50 p-4 rounded-xl border border-slate-100">No hay videos en esta sección aún.</p>';
           }
 
-          html += '</div></div>';
+          html += '</div></div></div>';
         }
 
         adminSectionsContainer.innerHTML = html;
+
+        // Asignar eventos de minimizar/expandir módulos
+        document.querySelectorAll('.toggle-section-header, .toggle-section-btn').forEach(function(el) {
+          el.addEventListener('click', function(e) {
+            const sectionId = el.getAttribute('data-section-id');
+            const container = document.getElementById('admin-section-' + sectionId);
+            const content = document.getElementById('section-content-' + sectionId);
+            const btn = container?.querySelector('.toggle-section-btn');
+            const textSpan = btn?.querySelector('.toggle-text');
+            const icon = container?.querySelector('.chevron-icon');
+
+            if (content) {
+              const isHidden = content.classList.toggle('hidden');
+              if (textSpan) {
+                textSpan.textContent = isHidden ? 'Expandir' : 'Minimizar';
+              }
+              if (icon) {
+                if (isHidden) {
+                  icon.classList.add('-rotate-90');
+                } else {
+                  icon.classList.remove('-rotate-90');
+                }
+              }
+            }
+          });
+        });
 
         document.querySelectorAll('.play-trigger').forEach(function(el) {
           el.addEventListener('click', function() {
@@ -424,40 +519,14 @@ if (!user || !isAdmin) {
       submitBtn.textContent = 'Procesando y subiendo contenido...';
 
       try {
-        // 1. Si seleccionó archivo de video MP4 local, subir a Supabase Storage
+        // 1. Si seleccionó archivo de video MP4 local, subir directamente a Supabase Storage
         if (videoFile) {
-          const formData = new FormData();
-          formData.append('file', videoFile);
-
-          const storageRes = await fetch('/api/videos/storage', {
-            method: 'POST',
-            body: formData,
-          });
-
-          const storageData = await storageRes.json();
-
-          if (!storageRes.ok || !storageData.publicUrl) {
-            throw new Error(storageData.error || 'Error al subir el archivo de video a Supabase Storage');
-          }
-
-          video_url = storageData.publicUrl;
+          video_url = await uploadFileToStorage(videoFile);
         }
 
-        // 2. Si seleccionó archivo de imagen de portada local, subir a Supabase Storage
+        // 2. Si seleccionó archivo de imagen de portada local, subir directamente a Supabase Storage
         if (thumbFile) {
-          const formData = new FormData();
-          formData.append('file', thumbFile);
-
-          const storageRes = await fetch('/api/videos/storage', {
-            method: 'POST',
-            body: formData,
-          });
-
-          const storageData = await storageRes.json();
-
-          if (storageRes.ok && storageData.publicUrl) {
-            thumbnail_url = storageData.publicUrl;
-          }
+          thumbnail_url = await uploadFileToStorage(thumbFile);
         }
 
         // 3. Publicar el video en la base de datos
@@ -467,7 +536,7 @@ if (!user || !isAdmin) {
           body: JSON.stringify({ section_id: sectionId, title, video_url, thumbnail_url, description }),
         });
 
-        const data = await response.json();
+        const data = await safeFetchJson(response, 'Error al guardar el video en la base de datos');
 
         if (response.ok) {
           messageDiv.className = 'video-message p-3 rounded-xl text-xs font-medium bg-green-100 text-green-800 border border-green-200';
@@ -500,7 +569,7 @@ if (!user || !isAdmin) {
           method: 'DELETE',
         });
 
-        const data = await response.json();
+        const data = await safeFetchJson(response, 'Error al eliminar el video');
 
         if (response.ok) {
           loadAdminSections();
@@ -523,7 +592,7 @@ if (!user || !isAdmin) {
           method: 'DELETE',
         });
 
-        const data = await response.json();
+        const data = await safeFetchJson(response, 'Error al eliminar la sección');
 
         if (response.ok) {
           loadAdminSections();

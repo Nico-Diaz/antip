@@ -249,10 +249,19 @@ const isAdmin = await isUserAdmin(user, accessToken);
     // Carga de Secciones y Videos (Vista de Usuario pura)
     const mainSectionsContainer = document.getElementById('main-sections-container');
 
+    async function safeFetchJson(res) {
+      const text = await res.text();
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        throw new Error('Respuesta inválida del servidor');
+      }
+    }
+
     async function loadDashboard() {
       try {
         const sectionsRes = await fetch('/api/videos/sections');
-        const sectionsData = await sectionsRes.json();
+        const sectionsData = await safeFetchJson(sectionsRes);
 
         if (!sectionsRes.ok || !sectionsData.sections || sectionsData.sections.length === 0) {
           mainSectionsContainer.innerHTML = '<div class="bg-white rounded-2xl p-12 border border-slate-200 text-center"><h3 class="text-lg font-bold text-[#06203D] mb-2">No hay contenidos publicados por el momento</h3><p class="text-slate-500 text-sm">Los videos publicados por la administración aparecerán aquí.</p></div>';
@@ -262,7 +271,7 @@ const isAdmin = await isUserAdmin(user, accessToken);
         let html = '';
         for (const section of sectionsData.sections) {
           const videosRes = await fetch('/api/videos/upload?section_id=' + section.id);
-          const videosData = await videosRes.json();
+          const videosData = await safeFetchJson(videosRes);
           const videos = videosData.videos || [];
 
           html += '<div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">';
