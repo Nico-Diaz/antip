@@ -416,7 +416,7 @@ const isAdmin = await isUserAdmin(user, accessToken);
 
           // Grilla de Videos (Tarjetas de solo lectura para los usuarios)
           if (videos.length > 0) {
-            videosHtml += '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">';
+            videosHtml += '<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">';
             videos.forEach(function(video) {
               const thumb = getThumbnailUrl(video.video_url, video.thumbnail_url);
               const jsonVideo = JSON.stringify(video).replace(/'/g, "&apos;").replace(/"/g, '&quot;');
@@ -426,10 +426,13 @@ const isAdmin = await isUserAdmin(user, accessToken);
               if (isCompleted) completedInSection++;
               
               let progressPercentage = 0;
+              let snappedProgress = 0;
               if (isCompleted) {
                 progressPercentage = 100;
+                snappedProgress = 100;
               } else if (prog && prog.watched_time && video.duration) {
                 progressPercentage = Math.min(100, Math.round((prog.watched_time / video.duration) * 100));
+                snappedProgress = Math.round(progressPercentage / 25) * 25;
               }
 
               videosHtml += '<div class="bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group video-card" data-title="' + video.title.toLowerCase() + '" data-desc="' + (video.description || '').toLowerCase() + '">';
@@ -444,29 +447,31 @@ const isAdmin = await isUserAdmin(user, accessToken);
               
               if (isCompleted) {
                 videosHtml += '<div class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-md flex items-center gap-1 shadow-md"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Completado</div>';
+              } else if (snappedProgress > 0) {
+                videosHtml += '<div class="absolute top-2 right-2 bg-[#0073CF]/90 backdrop-blur-sm text-white text-xs font-bold px-2 py-1 rounded-md shadow-md">' + snappedProgress + '%</div>';
               }
 
               // Play Overlay
               videosHtml += '<div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all flex items-center justify-center">';
-              videosHtml += '<div class="w-14 h-14 rounded-full bg-[#0073CF] text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300"><svg class="w-7 h-7 ml-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg></div></div>';
+              videosHtml += '<div class="w-10 h-10 rounded-full bg-[#0073CF] text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300"><svg class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg></div></div>';
               
               // ProgressBar overlay
-              if (progressPercentage > 0) {
-                videosHtml += '<div class="absolute bottom-0 left-0 right-0 h-1.5 bg-slate-800/80"><div class="h-full ' + (isCompleted ? 'bg-green-500' : 'bg-[#0073CF]') + '" style="width: ' + progressPercentage + '%"></div></div>';
+              if (snappedProgress > 0) {
+                videosHtml += '<div class="absolute bottom-0 left-0 right-0 h-1.5 bg-slate-800/80"><div class="h-full ' + (isCompleted ? 'bg-green-500' : 'bg-[#0073CF]') + '" style="width: ' + snappedProgress + '%"></div></div>';
               }
 
               videosHtml += '</div>';
 
               // Card Info
-              videosHtml += '<div class="p-5 flex-1 flex flex-col justify-between space-y-4">';
-              videosHtml += '<div><h3 class="font-bold text-[#06203D] text-lg leading-snug group-hover:text-[#0073CF] transition-colors">' + video.title + '</h3>';
+              videosHtml += '<div class="p-4 flex-1 flex flex-col justify-between space-y-3">';
+              videosHtml += '<div><h3 class="font-bold text-[#06203D] text-base leading-snug group-hover:text-[#0073CF] transition-colors">' + video.title + '</h3>';
               if (video.description) {
-                videosHtml += '<p class="text-slate-600 text-sm mt-2 line-clamp-2 leading-relaxed">' + video.description + '</p>';
+                videosHtml += '<details class="mt-2 text-slate-600 text-sm group/details"><summary class="cursor-pointer text-[#0073CF] font-medium hover:underline select-none flex items-center gap-1">Detalles <svg class="w-4 h-4 transform group-open/details:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></summary><p class="mt-2 leading-relaxed text-xs">' + video.description + '</p></details>';
               }
               videosHtml += '</div>';
 
-              videosHtml += '<button class="w-full bg-[#06203D] hover:bg-[#0073CF] text-white font-semibold py-2.5 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-sm play-trigger text-sm" data-video=\'' + jsonVideo + '\'>';
-              videosHtml += '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg> ' + (prog?.watched_time > 0 && !isCompleted ? 'Continuar Viendo' : 'Reproducir Video') + '</button>';
+              videosHtml += '<button class="w-full bg-[#06203D] hover:bg-[#0073CF] text-white font-semibold py-2 px-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-sm play-trigger text-xs" data-video=\'' + jsonVideo + '\'>';
+              videosHtml += '<svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg> ' + (prog?.watched_time > 0 && !isCompleted ? 'Continuar' : 'Reproducir') + '</button>';
 
               videosHtml += '</div></div>';
             });
