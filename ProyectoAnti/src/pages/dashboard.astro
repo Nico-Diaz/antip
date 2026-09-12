@@ -147,16 +147,7 @@ const isAdmin = await isUserAdmin(user, accessToken);
               Guardar
             </button>
           </div>
-          <a
-            id="modal-external-link"
-            href="#"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-xs text-[#0073CF] hover:underline flex items-center gap-1"
-          >
-            Enlace original
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-          </a>
+
         </div>
         <div id="modal-attachments-container" class="mt-4 pt-4 border-t border-slate-800 hidden">
           <h5 class="text-white text-sm font-semibold mb-3">Recursos Adjuntos</h5>
@@ -197,7 +188,6 @@ const isAdmin = await isUserAdmin(user, accessToken);
     const modalTitle = document.getElementById('modal-video-title');
     const modalSubtitle = document.getElementById('modal-video-subtitle');
     const modalDesc = document.getElementById('modal-video-desc');
-    const modalExternalLink = document.getElementById('modal-external-link');
     const closeModalBtn = document.getElementById('close-modal-btn');
 
     function renderVideoPlayer(videoUrl) {
@@ -207,7 +197,7 @@ const isAdmin = await isUserAdmin(user, accessToken);
       const vimeoId = getVimeoId(videoUrl);
 
       if (ytId) {
-        return '<iframe class="w-full h-full border-0" src="https://www.youtube.com/embed/' + ytId + '?autoplay=1&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+        return '<iframe class="w-full h-full border-0" sandbox="allow-scripts allow-same-origin allow-presentation" src="https://www.youtube.com/embed/' + ytId + '?autoplay=1&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
       }
 
       if (vimeoId) {
@@ -230,7 +220,6 @@ const isAdmin = await isUserAdmin(user, accessToken);
       modalTitle.textContent = video.title;
       modalSubtitle.textContent = video.title;
       modalDesc.textContent = video.description || 'Sin descripción disponible.';
-      modalExternalLink.href = video.video_url;
 
       modalContainer.innerHTML = renderVideoPlayer(video.video_url);
 
