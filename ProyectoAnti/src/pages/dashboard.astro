@@ -99,15 +99,24 @@ const isAdmin = await isUserAdmin(user, accessToken);
             Reproduciendo Video
           </h3>
         </div>
-        <button
-          id="close-modal-btn"
-          class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-colors"
+        <div class="flex items-center gap-2">
+          <button
+            id="theater-mode-btn"
+            class="bg-slate-800 text-slate-300 hover:text-white px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors border border-slate-700"
+            title="Modo Cine"
+          >
+            🎬 Modo Cine
+          </button>
+          <button
+            id="close-modal-btn"
+            class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-colors"
           title="Cerrar (Esc)"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
           </svg>
         </button>
+        </div>
       </div>
 
       <!-- Contenedor del Reproductor Embebido -->
@@ -120,11 +129,19 @@ const isAdmin = await isUserAdmin(user, accessToken);
         <h4 class="text-white font-semibold mb-1 text-base" id="modal-video-subtitle"></h4>
         <p id="modal-video-desc" class="text-slate-300 text-sm leading-relaxed whitespace-pre-line"></p>
         <div class="mt-4 pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div class="flex items-center gap-3">
-            <button id="mark-completed-btn" class="bg-green-600 hover:bg-green-500 text-white text-sm font-semibold py-2 px-4 rounded-xl flex items-center gap-2 transition-colors">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
+            <button id="mark-completed-btn" class="bg-green-600 hover:bg-green-500 text-white text-sm font-semibold py-2 px-4 rounded-xl flex items-center gap-2 transition-colors w-full sm:w-auto justify-center">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
               Marcar Completado
             </button>
+            
+            <div class="flex items-center gap-1 sm:ml-2 bg-slate-800/50 px-3 py-1.5 rounded-xl border border-slate-700/50" id="modal-rating-container">
+              <span class="text-xs font-semibold text-slate-400 mr-1">Valoración:</span>
+              <div class="flex items-center gap-1 rating-stars" id="video-rating-stars">
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
             <button id="mark-favorite-btn" class="bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold py-2 px-4 rounded-xl flex items-center gap-2 transition-colors border border-slate-700">
               <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
               Guardar
@@ -236,9 +253,9 @@ const isAdmin = await isUserAdmin(user, accessToken);
             container.classList.remove('hidden');
             let html = '';
             data.attachments.forEach(att => {
-              html += '<a href="' + att.file_url + '" target="_blank" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm py-3 px-4 rounded-xl transition-colors border border-slate-700 group">';
-              html += '<svg class="w-5 h-5 text-[#0073CF] group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>';
-              html += '<span class="flex-1 font-medium">' + att.title + '</span>';
+              html += '<a href="' + att.file_url + '" target="_blank" class="flex items-center gap-3 bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 text-slate-200 text-sm py-3 px-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-white/5 hover:scale-[1.02] group">';
+              html += '<div class="bg-white/10 p-2 rounded-lg group-hover:bg-[#0073CF]/20 transition-colors"><svg class="w-5 h-5 text-[#0073CF] group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>';
+              html += '<span class="flex-1 font-medium tracking-wide">' + att.title + '</span>';
               html += '</a>';
             });
             list.innerHTML = html;
@@ -247,6 +264,52 @@ const isAdmin = await isUserAdmin(user, accessToken);
             list.innerHTML = '';
           }
         });
+
+      // Reset Theater mode
+      const modalInner = modal.querySelector('.relative');
+      modalInner.classList.remove('max-w-none', 'h-screen', 'rounded-none');
+      modalInner.classList.add('max-w-4xl', 'rounded-2xl', 'max-h-[90vh]');
+      const modalDetails = modal.querySelector('.p-6');
+      modalDetails.classList.remove('hidden');
+      
+      // Load and Setup Ratings
+      const ratingContainer = document.getElementById('video-rating-stars');
+      if (ratingContainer) {
+        ratingContainer.innerHTML = '';
+        for (let i = 1; i <= 5; i++) {
+          ratingContainer.innerHTML += '<button data-value="' + i + '" class="text-slate-600 hover:text-yellow-400 focus:text-yellow-400 focus:outline-none transition-colors rating-star-btn"><svg class="w-5 h-5 pointer-events-none" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg></button>';
+        }
+        
+        fetch('/api/videos/rate?video_id=' + video.id)
+          .then(res => res.json())
+          .then(data => {
+            if (data.rating) updateStarsUI(data.rating);
+          });
+
+        document.querySelectorAll('.rating-star-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const val = parseInt(e.target.dataset.value);
+            updateStarsUI(val);
+            fetch('/api/videos/rate', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ video_id: video.id, rating: val })
+            });
+          });
+        });
+      }
+      
+      function updateStarsUI(rating) {
+        document.querySelectorAll('.rating-star-btn').forEach(btn => {
+          if (parseInt(btn.dataset.value) <= rating) {
+            btn.classList.add('text-yellow-400');
+            btn.classList.remove('text-slate-600');
+          } else {
+            btn.classList.add('text-slate-600');
+            btn.classList.remove('text-yellow-400');
+          }
+        });
+      }
 
       // Auto-save progress for native video tags
       const nativeVideo = modalContainer.querySelector('video');
@@ -293,7 +356,24 @@ const isAdmin = await isUserAdmin(user, accessToken);
       document.body.style.overflow = '';
     }
 
+    // Modal Event Listeners
     closeModalBtn?.addEventListener('click', closeModal);
+    
+    document.getElementById('theater-mode-btn')?.addEventListener('click', () => {
+      const modalInner = modal.querySelector('.relative');
+      const modalDetails = modal.querySelector('.p-6.bg-slate-900.border-t');
+      
+      if (modalInner.classList.contains('max-w-none')) {
+        modalInner.classList.remove('max-w-none', 'h-screen', 'rounded-none');
+        modalInner.classList.add('max-w-4xl', 'rounded-2xl', 'max-h-[90vh]');
+        modalDetails.classList.remove('hidden');
+      } else {
+        modalInner.classList.add('max-w-none', 'h-screen', 'rounded-none');
+        modalInner.classList.remove('max-w-4xl', 'rounded-2xl', 'max-h-[90vh]');
+        modalDetails.classList.add('hidden');
+      }
+    });
+
     modal?.addEventListener('click', function(e) {
       if (e.target === modal) closeModal();
     });

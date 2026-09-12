@@ -183,3 +183,73 @@ export const DELETE: APIRoute = async ({ cookies, url }) => {
     })
   }
 }
+
+export const PUT: APIRoute = async ({ request, cookies }) => {
+  try {
+    const accessToken = cookies.get('sb-access-token')?.value
+
+    if (!accessToken) {
+      return new Response(JSON.stringify({ error: 'No autenticado' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    const { data: { user }, error: userError } = await supabase.auth.getUser(accessToken)
+
+    const isAdmin = await isUserAdmin(user, accessToken)
+    if (userError || !user || !isAdmin) {
+      return new Response(JSON.stringify({ error: 'No tienes permisos' }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    const rawText = await request.text()
+    if (!rawText) {
+      return new Response(JSON.stringify({ error: 'Cuerpo de solicitud vacío' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    const { id, section_id, title, description, video_url, thumbnail_url, duration } = JSON.parse(rawText)
+
+    if (!id || !section_id || !title || !video_url) {
+      return new Response(JSON.stringify({ error: 'Faltan campos requeridos: id, section_id, title, video_url' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    const { data, error } = await getAuthClient(accessToken)
+      .from('videos')
+      .update({
+        section_id,
+        title,
+        description: description || '',
+        video_url,
+        thumbnail_url: thumbnail_url || null,
+        duration: duration || null,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+
+    if (error) {
+      throw error
+    }
+
+    return new Response(JSON.stringify({ success: true, video: data?.[0] }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  } catch (err: any) {
+    console.error('[Error API Upload PUT]:', err)
+    const errorMessage = err?.message || String(err) || 'Error al editar el video'
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
+}

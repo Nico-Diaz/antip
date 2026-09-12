@@ -187,12 +187,29 @@ alter table public.user_favorites enable row level security;
 drop policy if exists "Users can read their own favorites" on public.user_favorites;
 create policy "Users can read their own favorites"
   on public.user_favorites for select
+
+-- Valoración de Videos por Usuario
+create table if not exists public.user_video_ratings (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  video_id uuid not null references public.videos(id) on delete cascade,
+  rating int not null check (rating >= 1 and rating <= 5),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique(user_id, video_id)
+);
+
+alter table public.user_video_ratings enable row level security;
+
+drop policy if exists "Users can read their own ratings" on public.user_video_ratings;
+create policy "Users can read their own ratings"
+  on public.user_video_ratings for select
   to authenticated
   using (auth.uid() = user_id);
 
-drop policy if exists "Users can update their own favorites" on public.user_favorites;
-create policy "Users can update their own favorites"
-  on public.user_favorites for all
+drop policy if exists "Users can update their own ratings" on public.user_video_ratings;
+create policy "Users can update their own ratings"
+  on public.user_video_ratings for all
   to authenticated
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
