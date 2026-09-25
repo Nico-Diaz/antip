@@ -12,7 +12,7 @@ if (!user || !isAdmin) {
 ---
 
 <Layout>
-  <main class="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
+  <main class="min-h-screen bg-slate-50 dark:bg-slate-950 py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
     <div class="max-w-7xl mx-auto space-y-8">
       
       <!-- Header de Administración -->
@@ -47,25 +47,35 @@ if (!user || !isAdmin) {
               Cerrar Sesión
             </button>
           </form>
+
+          <!-- Botón Dark Mode -->
+          <button id="theme-toggle" class="w-10 h-10 rounded-xl bg-slate-800/50 hover:bg-slate-700 flex items-center justify-center text-slate-300 transition-colors border border-slate-700 shadow-sm">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+            </svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+            </svg>
+          </button>
         </div>
       </div>
 
       <!-- Crear Nueva Sección -->
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
-        <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
-          <div class="p-2 bg-blue-50 text-[#0073CF] rounded-xl border border-blue-100">
+      <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 transition-colors duration-300">
+        <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+          <div class="p-2 bg-blue-50 dark:bg-blue-900/30 text-[#0073CF] dark:text-[#3399ff] rounded-xl border border-blue-100 dark:border-blue-900/50">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>
           <div>
-            <h2 class="text-xl font-bold text-[#06203D]">Crear Nueva Sección o Módulo</h2>
-            <p class="text-xs text-slate-500">Agregue un nuevo bloque donde agrupar clases o cursos.</p>
+            <h2 class="text-xl font-bold text-[#06203D] dark:text-white">Crear Nueva Sección o Módulo</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Agregue un nuevo bloque donde agrupar clases o cursos.</p>
           </div>
         </div>
 
         <form id="create-section-form" class="space-y-4">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label for="section-title" class="block text-xs font-semibold text-slate-700 mb-1.5">
+              <label for="section-title" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
                 Título de la Sección / Módulo *
               </label>
               <input
@@ -73,21 +83,29 @@ if (!user || !isAdmin) {
                 id="section-title"
                 name="section-title"
                 required
-                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0073CF] focus:bg-white text-sm"
+                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0073CF] focus:bg-white dark:focus:bg-slate-900 text-sm"
                 placeholder="Ej: Módulo 1 - Introducción al Programa"
               />
             </div>
             <div>
-              <label for="section-description" class="block text-xs font-semibold text-slate-700 mb-1.5">
+              <label for="section-description" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
                 Descripción Corta
               </label>
               <input
                 type="text"
                 id="section-description"
                 name="section-description"
-                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0073CF] focus:bg-white text-sm"
+                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0073CF] focus:bg-white dark:focus:bg-slate-900 text-sm"
                 placeholder="Breve explicación del módulo"
               />
+            </div>
+            <div class="sm:col-span-2">
+              <label for="section-parent" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                Pertenece a (Opcional - para crear subsecciones)
+              </label>
+              <select id="section-parent" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0073CF] text-sm">
+                <option value="">(Ninguna - Es una sección principal)</option>
+              </select>
             </div>
           </div>
           <div class="flex items-center gap-3 pt-2">
@@ -111,11 +129,11 @@ if (!user || !isAdmin) {
 
       <!-- Lista de Secciones y Formulario de Carga de Videos -->
       <div id="admin-sections-container" class="space-y-8">
-        <div class="bg-white rounded-2xl p-12 border border-slate-200 text-center">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-12 border border-slate-200 dark:border-slate-800 text-center transition-colors duration-300">
           <div class="animate-spin inline-block w-8 h-8 border-4 border-current border-t-transparent text-[#0073CF] rounded-full" role="status">
             <span class="sr-only">Cargando...</span>
           </div>
-          <p class="text-slate-500 mt-3 text-sm font-medium">Cargando secciones de administración...</p>
+          <p class="text-slate-500 dark:text-slate-400 mt-3 text-sm font-medium">Cargando secciones de administración...</p>
         </div>
       </div>
 
@@ -412,12 +430,13 @@ if (!user || !isAdmin) {
 
       const title = document.getElementById('section-title').value;
       const description = document.getElementById('section-description').value;
+      const parent_id = document.getElementById('section-parent').value;
 
       try {
         const response = await fetch('/api/videos/sections', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title, description }),
+          body: JSON.stringify({ title, description, parent_id }),
         });
 
         const data = await safeFetchJson(response, 'Error al crear la sección');
@@ -444,94 +463,115 @@ if (!user || !isAdmin) {
         const sectionsRes = await fetch('/api/videos/sections');
         const sectionsData = await safeFetchJson(sectionsRes, 'Error al obtener secciones');
 
+        const sectionParentSelect = document.getElementById('section-parent');
+        if (sectionParentSelect && sectionsData.sections) {
+          sectionParentSelect.innerHTML = '<option value="">(Ninguna - Es una sección principal)</option>';
+          sectionsData.sections.filter(s => !s.parent_id).forEach(s => {
+            sectionParentSelect.innerHTML += `<option value="${s.id}">${s.title}</option>`;
+          });
+        }
+
         if (!sectionsRes.ok || !sectionsData.sections || sectionsData.sections.length === 0) {
-          adminSectionsContainer.innerHTML = '<div class="bg-white rounded-2xl p-12 border border-slate-200 text-center"><p class="text-slate-500 text-sm">No hay secciones creadas aún. Utilice el formulario superior para crear la primera sección.</p></div>';
+          adminSectionsContainer.innerHTML = '<div class="bg-white dark:bg-slate-900 rounded-2xl p-12 border border-slate-200 dark:border-slate-800 text-center transition-colors"><p class="text-slate-500 dark:text-slate-400 text-sm">No hay secciones creadas aún. Utilice el formulario superior para crear la primera sección.</p></div>';
           return;
         }
 
+        const mainSections = sectionsData.sections.filter(s => !s.parent_id);
+        const subSections = sectionsData.sections.filter(s => s.parent_id);
+
         let html = '';
-        for (const section of sectionsData.sections) {
+        
+        async function buildSectionHtml(section, isSub = false) {
           const videosRes = await fetch('/api/videos/upload?section_id=' + section.id);
           const videosData = await safeFetchJson(videosRes, 'Error al obtener videos');
           const videos = videosData.videos || [];
 
-          html += '<div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6 transition-all" id="admin-section-' + section.id + '">';
+          let sh = '';
+          const margin = isSub ? 'ml-8 mt-6 border-l-4 border-[#0073CF]' : '';
+          const titlePrefix = isSub ? '↳ ' : '';
           
-          // Encabezado de la sección (con botón e icono para minimizar/expandir)
-          html += '<div class="flex items-start justify-between gap-4 pb-4 border-b border-slate-100 cursor-pointer select-none toggle-section-header" data-section-id="' + section.id + '">';
-          html += '<div class="flex items-center gap-3"><svg class="chevron-icon w-6 h-6 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>';
-          html += '<div><h3 class="text-xl font-bold text-[#06203D]">' + section.title + '</h3>';
+          sh += '<div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 transition-all ' + margin + '" id="admin-section-' + section.id + '">';
+          
+          sh += '<div class="flex items-start justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800 cursor-pointer select-none toggle-section-header" data-section-id="' + section.id + '">';
+          sh += '<div class="flex items-center gap-3"><svg class="chevron-icon w-6 h-6 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>';
+          sh += '<div><h3 class="text-xl font-bold text-[#06203D] dark:text-white">' + titlePrefix + section.title + '</h3>';
           if (section.description) {
-            html += '<p class="text-slate-500 text-sm mt-1">' + section.description + '</p>';
+            sh += '<p class="text-slate-500 dark:text-slate-400 text-sm mt-1">' + section.description + '</p>';
           }
-          html += '</div></div>';
+          sh += '</div></div>';
 
-          html += '<div class="flex items-center gap-3 shrink-0" onclick="event.stopPropagation()">';
-          html += '<span class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-200">' + videos.length + ' videos</span>';
-          html += '<button class="toggle-section-btn bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-1.5 rounded-xl text-xs transition border border-slate-300 flex items-center gap-1" data-section-id="' + section.id + '"><span class="toggle-text">Minimizar</span></button>';
-          html += '<button class="delete-section-btn bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-semibold px-3.5 py-1.5 rounded-xl text-xs transition flex items-center gap-1" data-section-id="' + section.id + '"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> Eliminar Sección</button>';
-          html += '</div></div>';
+          sh += '<div class="flex items-center gap-3 shrink-0" onclick="event.stopPropagation()">';
+          sh += '<span class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">' + videos.length + ' videos</span>';
+          sh += '<button class="toggle-section-btn bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs transition border border-slate-300 dark:border-slate-600 flex items-center gap-1" data-section-id="' + section.id + '"><span class="toggle-text">Minimizar</span></button>';
+          sh += '<button class="delete-section-btn bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 font-semibold px-3.5 py-1.5 rounded-xl text-xs transition flex items-center gap-1" data-section-id="' + section.id + '">Eliminar</button>';
+          sh += '</div></div>';
 
-          // Contenedor del módulo colapsable (Formulario + Lista de videos)
-          html += '<div class="section-content space-y-6" id="section-content-' + section.id + '">';
-
-          // Formulario Subir Video + Imagen de Portada en esta sección
-          html += '<div class="bg-slate-50 rounded-xl p-6 border border-slate-200"><h4 class="font-bold text-[#06203D] text-sm mb-4 flex items-center gap-2"><svg class="w-4 h-4 text-[#0073CF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Publicar Video en esta Sección</h4>';
-          html += '<form class="upload-video-form space-y-4" data-section-id="' + section.id + '">';
-          html += '<div><label class="block text-xs font-medium text-slate-700 mb-1">Título del Video *</label><input type="text" class="video-title w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#0073CF] focus:border-transparent" placeholder="Ej: Clase 1 - Conceptos clave" required /></div>';
+          sh += '<div class="section-content space-y-6" id="section-content-' + section.id + '">';
           
-          // Bloque Origen del Video
-          html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-4 rounded-xl border border-slate-200">';
-          html += '<div><label class="block text-xs font-semibold text-[#06203D] mb-1">📁 Archivo de Video MP4 (desde tu equipo)</label><input type="file" class="video-file w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-[#0073CF]" accept="video/mp4,video/webm,video/ogg" /><p class="text-[11px] text-slate-400 mt-1">Sube archivos MP4, WebM u OGG.</p></div>';
-          html += '<div><label class="block text-xs font-semibold text-[#06203D] mb-1">🔗 O pega la URL del Video</label><input type="url" class="video-url w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-[#0073CF]" placeholder="https://youtube.com/watch?v=... o enlace web" /><p class="text-[11px] text-slate-400 mt-1">Enlace de YouTube, Vimeo o video externo.</p></div>';
-          html += '</div>';
+          sh += '<div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700"><h4 class="font-bold text-[#06203D] dark:text-white text-sm mb-4 flex items-center gap-2">Publicar Video en esta ' + (isSub ? 'Subsección' : 'Sección') + '</h4>';
+          sh += '<form class="upload-video-form space-y-4" data-section-id="' + section.id + '">';
+          sh += '<div><label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Título del Video *</label><input type="text" class="video-title w-full px-3.5 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-[#0073CF]" required /></div>';
+          
+          sh += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700">';
+          sh += '<div><label class="block text-xs font-semibold text-[#06203D] dark:text-slate-200 mb-1">📁 Archivo de Video MP4</label><input type="file" class="video-file w-full px-3 py-1.5 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-600 rounded-xl text-xs focus:ring-2 focus:ring-[#0073CF]" accept="video/mp4,video/webm,video/ogg" /></div>';
+          sh += '<div><label class="block text-xs font-semibold text-[#06203D] dark:text-slate-200 mb-1">🔗 O URL del Video</label><input type="url" class="video-url w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-600 rounded-xl text-xs focus:ring-2 focus:ring-[#0073CF]" /></div>';
+          sh += '</div>';
 
-          // Bloque Imagen de Portada / Miniatura
-          html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-blue-50/50 p-4 rounded-xl border border-blue-100">';
-          html += '<div><label class="block text-xs font-semibold text-[#06203D] mb-1">🖼️ Imagen de Portada / Vista Previa (Opcional)</label><input type="file" class="thumb-file w-full px-3 py-1.5 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-[#0073CF]" accept="image/png,image/jpeg,image/webp,image/jpg" /><p class="text-[11px] text-slate-500 mt-1">Sube una imagen JPG, PNG o WebP desde tu equipo.</p></div>';
-          html += '<div><label class="block text-xs font-semibold text-[#06203D] mb-1">🔗 O pega la URL de la Imagen de Portada</label><input type="url" class="thumb-url w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-[#0073CF]" placeholder="https://ejemplo.com/portada.jpg" /><p class="text-[11px] text-slate-500 mt-1">Se usará como miniatura en la tarjeta del video.</p></div>';
-          html += '</div>';
+          sh += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-blue-50/50 p-4 rounded-xl border border-blue-100">';
+          sh += '<div><label class="block text-xs font-semibold text-[#06203D] mb-1">🖼️ Imagen de Portada</label><input type="file" class="thumb-file w-full px-3 py-1.5 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-[#0073CF]" accept="image/png,image/jpeg,image/webp,image/jpg" /></div>';
+          sh += '<div><label class="block text-xs font-semibold text-[#06203D] mb-1">🔗 O URL de Portada</label><input type="url" class="thumb-url w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-[#0073CF]" /></div>';
+          sh += '</div>';
 
-          html += '<div><label class="block text-xs font-medium text-slate-700 mb-1">Descripción del Video</label><textarea class="video-description w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#0073CF] focus:border-transparent" placeholder="Detalles adicionales o resumen del contenido" rows="2"></textarea></div>';
-          html += '<div class="flex items-center gap-3 pt-1"><button type="submit" class="submit-btn bg-[#0073CF] hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-xl transition-colors shadow-sm text-sm">Publicar Video</button><button type="reset" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-xl transition-colors text-sm">Limpiar Formulario</button></div>';
-          html += '<div class="video-message hidden p-3 rounded-xl text-xs font-medium"></div></form></div>';
+          sh += '<div><label class="block text-xs font-medium text-slate-700 mb-1">Descripción</label><textarea class="video-description w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#0073CF]" rows="2"></textarea></div>';
+          sh += '<div class="flex items-center gap-3 pt-1"><button type="submit" class="submit-btn bg-[#0073CF] hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-xl text-sm">Publicar Video</button><button type="reset" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-xl text-sm">Limpiar</button></div>';
+          sh += '<div class="video-message hidden p-3 rounded-xl text-xs font-medium"></div></form></div>';
 
-          // Lista de Videos Publicados en esta sección
-          html += '<div><h4 class="font-bold text-[#06203D] text-sm mb-4">Videos subidos a este módulo</h4>';
+          sh += '<div><h4 class="font-bold text-[#06203D] text-sm mb-4">Videos subidos</h4>';
           if (videos.length > 0) {
-            html += '<div class="space-y-3">';
+            sh += '<div class="space-y-3">';
             videos.forEach(function(video) {
               const thumb = getThumbnailUrl(video.video_url, video.thumbnail_url);
-              const jsonVideo = JSON.stringify(video).replace(/'/g, "&apos;").replace(/"/g, '&quot;');
+              const jsonVideo = JSON.stringify(video).replace(/\'/g, "&apos;").replace(/\"/g, '&quot;');
 
-              html += '<div class="bg-slate-50 rounded-xl p-4 border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:border-slate-300 transition-all">';
-              html += '<div class="flex items-center gap-4 flex-1 min-w-0">';
+              sh += '<div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:border-slate-300 dark:hover:border-slate-600 transition-all">';
+              sh += '<div class="flex items-center gap-4 flex-1 min-w-0">';
               
               if (thumb) {
-                html += '<div class="relative w-24 h-14 rounded-lg overflow-hidden bg-slate-800 flex-shrink-0 group cursor-pointer play-trigger" data-video=\'' + jsonVideo + '\'><img src="' + thumb + '" alt="' + video.title + '" class="w-full h-full object-cover group-hover:scale-105 transition-transform" /><div class="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition"><svg class="w-6 h-6 text-white drop-shadow" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg></div></div>';
+                sh += '<div class="relative w-24 h-14 rounded-lg overflow-hidden bg-slate-800 flex-shrink-0 group cursor-pointer play-trigger" data-video=\'' + jsonVideo + '\'><img src="' + thumb + '" alt="' + video.title + '" class="w-full h-full object-cover group-hover:scale-105 transition-transform" /></div>';
               } else {
-                html += '<div class="w-24 h-14 rounded-lg bg-[#06203D] flex items-center justify-center flex-shrink-0 cursor-pointer play-trigger" data-video=\'' + jsonVideo + '\'><svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg></div>';
+                sh += '<div class="w-24 h-14 rounded-lg bg-[#06203D] dark:bg-slate-700 flex items-center justify-center flex-shrink-0 cursor-pointer play-trigger" data-video=\'' + jsonVideo + '\'></div>';
               }
 
-              html += '<div class="min-w-0"><h5 class="font-bold text-[#06203D] text-sm truncate">' + video.title + '</h5>';
+              sh += '<div class="min-w-0"><h5 class="font-bold text-[#06203D] dark:text-slate-200 text-sm truncate">' + video.title + '</h5>';
               if (video.description) {
-                html += '<p class="text-slate-500 text-xs truncate mt-0.5">' + video.description + '</p>';
+                sh += '<p class="text-slate-500 dark:text-slate-400 text-xs truncate mt-0.5">' + video.description + '</p>';
               }
-              html += '<button class="text-[#0073CF] text-xs font-semibold hover:underline mt-1 inline-flex items-center gap-1 play-trigger" data-video=\'' + jsonVideo + '\'><svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg> Probar Vista Previa</button></div></div>';
-              html += '<div class="flex items-center gap-2 self-end sm:self-center">';
-              html += '<button class="manage-attachments-btn bg-slate-200 hover:bg-slate-300 text-slate-800 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1 shadow-sm" data-video-id="' + video.id + '"><svg class="w-3.5 h-3.5 text-[#0073CF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg> Adjuntos</button>';
-              html += '<button class="edit-video-btn bg-slate-200 hover:bg-slate-300 text-slate-800 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1 shadow-sm" data-video=\'' + jsonVideo + '\'><svg class="w-3.5 h-3.5 text-[#0073CF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg> Editar</button>';
-              html += '<button class="delete-video-btn bg-red-600 hover:bg-red-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1 shadow-sm" data-video-id="' + video.id + '"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> Eliminar</button>';
-              html += '</div></div>';
+              sh += '<button class="text-[#0073CF] dark:text-[#3399ff] text-xs font-semibold hover:underline mt-1 play-trigger" data-video=\'' + jsonVideo + '\'>Probar Vista Previa</button></div></div>';
+              sh += '<div class="flex items-center gap-2 self-end sm:self-center">';
+              sh += '<button class="manage-attachments-btn bg-slate-200 hover:bg-slate-300 text-slate-800 px-3.5 py-1.5 rounded-lg text-xs font-semibold" data-video-id="' + video.id + '">Adjuntos</button>';
+              sh += '<button class="edit-video-btn bg-slate-200 hover:bg-slate-300 text-slate-800 px-3.5 py-1.5 rounded-lg text-xs font-semibold" data-video=\'' + jsonVideo + '\'>Editar</button>';
+              sh += '<button class="delete-video-btn bg-red-600 hover:bg-red-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold" data-video-id="' + video.id + '">Eliminar</button>';
+              sh += '</div></div>';
             });
-            html += '</div>';
+            sh += '</div>';
           } else {
-            html += '<p class="text-slate-400 text-sm italic bg-slate-50 p-4 rounded-xl border border-slate-100">No hay videos en esta sección aún.</p>';
+            sh += '<p class="text-slate-400 text-sm italic bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">No hay videos aún.</p>';
           }
 
-          html += '</div></div></div>';
+          const sectionSubSections = subSections.filter(s => s.parent_id === section.id);
+          for(const sub of sectionSubSections) {
+             sh += await buildSectionHtml(sub, true);
+          }
+
+          sh += '</div></div></div>';
+          return sh;
         }
 
+        html = '';
+        for (const section of mainSections) {
+          html += await buildSectionHtml(section, false);
+        }
+        
         adminSectionsContainer.innerHTML = html;
 
         // Asignar eventos de minimizar/expandir módulos
@@ -878,6 +918,30 @@ if (!user || !isAdmin) {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Subir Adjunto';
       }
+    });
+
+    // Script del Theme Toggle
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const darkIcon = document.getElementById('theme-toggle-dark-icon');
+    const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+    if (document.documentElement.classList.contains('dark')) {
+        lightIcon.classList.remove('hidden');
+    } else {
+        darkIcon.classList.remove('hidden');
+    }
+
+    themeToggleBtn?.addEventListener('click', function() {
+        darkIcon.classList.toggle('hidden');
+        lightIcon.classList.toggle('hidden');
+        
+        if (document.documentElement.classList.contains('dark')) {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        } else {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        }
     });
 
     loadAdminSections();

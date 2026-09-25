@@ -2,7 +2,7 @@
 import '../styles/global.css';
 ---
 <!doctype html>
-<html lang="es">
+<html lang="es" class="antialiased">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
@@ -11,8 +11,27 @@ import '../styles/global.css';
 		<meta name="generator" content={Astro.generator} />
 		<meta name="description" content="Panel Administrativo del Instituto Antipobreza" />
 		<title>Instituto Antipobreza - Login</title>
+		
+		<!-- Theme initialization to prevent FOUC -->
+		<script is:inline>
+			const theme = (() => {
+				if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+					return localStorage.getItem('theme');
+				}
+				if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+					return 'dark';
+				}
+				return 'light';
+			})();
+			if (theme === 'dark') {
+				document.documentElement.classList.add('dark');
+			} else {
+				document.documentElement.classList.remove('dark');
+			}
+			window.localStorage.setItem('theme', theme);
+		</script>
 	</head>
-	<body>
+	<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen m-0 w-full">
 		<slot />
 	</body>
 </html>
@@ -20,12 +39,5 @@ import '../styles/global.css';
 <style>
 	html {
 		scroll-behavior: smooth;
-	}
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		min-height: 100%;
-		background-color: #f8fafc;
 	}
 </style>

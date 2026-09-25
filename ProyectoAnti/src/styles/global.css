@@ -1,1 +1,4 @@
 @import "tailwindcss";
+
+/* Habilitar modo oscuro por clase (.dark) en lugar del default del sistema operativo */
+@custom-variant dark (&:where(.dark, .dark *));

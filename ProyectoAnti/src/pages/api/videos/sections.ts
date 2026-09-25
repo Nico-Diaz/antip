@@ -31,7 +31,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       })
     }
 
-    const { title, description } = JSON.parse(rawText)
+    const { title, description, parent_id } = JSON.parse(rawText)
 
     if (!title) {
       return new Response(JSON.stringify({ error: 'El título es requerido' }), {
@@ -54,6 +54,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       .insert({
         title,
         description: description || '',
+        parent_id: parent_id || null,
         display_order: maxOrder + 1,
       })
       .select()

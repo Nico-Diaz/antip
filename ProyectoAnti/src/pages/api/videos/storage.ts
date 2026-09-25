@@ -42,39 +42,41 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     const arrayBuffer = await file.arrayBuffer()
     const fileBuffer = new Uint8Array(arrayBuffer)
 
-    // Crear cliente de Supabase autenticado con el token del usuario activo
-    const authSupabase = createClient(
-      import.meta.env.PUBLIC_SUPABASE_URL,
-      import.meta.env.PUBLIC_SUPABASE_ANON_KEY,
-      {
-        global: {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      }
-    )
+    // Configuración de Bunny.net desde variables de entorno
+    const storageZone = import.meta.env.BUNNY_STORAGE_ZONE_NAME
+    const accessKey = import.meta.env.BUNNY_STORAGE_API_KEY
+    const storageEndpoint = import.meta.env.BUNNY_STORAGE_ENDPOINT || 'storage.bunnycdn.com'
+    const pullZone = import.meta.env.BUNNY_PULL_ZONE_URL
 
-    // Intentar subir al bucket 'videos' de Supabase Storage
-    const { data: uploadData, error: uploadError } = await authSupabase.storage
-      .from('videos')
-      .upload(fileName, fileBuffer, {
-        contentType: file.type || 'video/mp4',
-        upsert: true,
+    if (!storageZone || !accessKey || !pullZone) {
+      return new Response(JSON.stringify({ error: 'Falta configuración de Bunny.net en las variables de entorno (.env)' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
       })
-
-    if (uploadError) {
-      console.error('[Supabase Storage Upload Error Details]:', uploadError)
-      const details = uploadError.message || JSON.stringify(uploadError)
-      throw new Error(`Error en Supabase Storage (${details}). Asegúrese de haber creado el bucket 'videos' con acceso público.`)
     }
 
-    // Obtener la URL pública del archivo subido
-    const { data: publicUrlData } = authSupabase.storage
-      .from('videos')
-      .getPublicUrl(fileName)
+    // URL de subida de Bunny Storage
+    const uploadUrl = `https://${storageEndpoint}/${storageZone}/${fileName}`
 
-    const publicUrl = publicUrlData.publicUrl
+    // Subir el archivo a Bunny Storage mediante la API HTTP
+    const uploadResponse = await fetch(uploadUrl, {
+      method: 'PUT',
+      headers: {
+        'AccessKey': accessKey,
+        'Content-Type': file.type || 'application/octet-stream',
+      },
+      body: fileBuffer,
+    })
+
+    if (!uploadResponse.ok) {
+      const errorText = await uploadResponse.text()
+      console.error('[Bunny Storage Upload Error]:', uploadResponse.status, errorText)
+      throw new Error(`Error al subir a Bunny.net: ${uploadResponse.statusText}`)
+    }
+
+    // Generar la URL pública del archivo a través de la CDN (Pull Zone)
+    const cleanPullZone = pullZone.replace(/\/$/, '')
+    const publicUrl = `${cleanPullZone}/${fileName}`
 
     return new Response(
       JSON.stringify({
