@@ -167,3 +167,66 @@ export const DELETE: APIRoute = async ({ cookies, url }) => {
     })
   }
 }
+
+export const PUT: APIRoute = async ({ request, cookies }) => {
+  try {
+    const accessToken = cookies.get('sb-access-token')?.value
+
+    if (!accessToken) {
+      return new Response(JSON.stringify({ error: 'No autenticado' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    const { data: { user }, error: userError } = await supabase.auth.getUser(accessToken)
+    
+    // Asumimos isUserAdmin está importado
+    const isAdmin = await isUserAdmin(user, accessToken)
+    if (userError || !user || !isAdmin) {
+      return new Response(JSON.stringify({ error: 'No tienes permisos' }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    const rawText = await request.text()
+    if (!rawText) {
+      return new Response(JSON.stringify({ error: 'Cuerpo de solicitud vacío' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    const { id, title, description } = JSON.parse(rawText)
+
+    if (!id || !title) {
+      return new Response(JSON.stringify({ error: 'ID y título son requeridos' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    const { data, error } = await getAuthClient(accessToken)
+      .from('sections')
+      .update({ title, description: description || '' })
+      .eq('id', id)
+      .select()
+
+    if (error) {
+      throw error
+    }
+
+    return new Response(JSON.stringify({ success: true, section: data?.[0] }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  } catch (err: any) {
+    console.error('[Error API Sections PUT]:', err)
+    const errorMessage = err?.message || String(err) || 'Error al actualizar la sección'
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
+}

@@ -20,36 +20,33 @@ if (!user || !isAdmin) {
         <div>
           <div class="flex items-center gap-3">
             <h1 class="text-3xl font-bold text-white">Panel de Administración</h1>
-            <span class="bg-[#0073CF] text-white text-xs font-semibold px-3 py-1 rounded-full border border-blue-400/30">
-              Gestión de Contenido
-            </span>
           </div>
           <p class="text-slate-300 mt-1 text-sm">
             Cree módulos, publique videos MP4 o enlaces y personalice sus portadas.
           </p>
         </div>
 
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+        <div class="flex flex-wrap sm:flex-nowrap items-center gap-3 mt-4 md:mt-0 w-full md:w-auto">
           <a
             href="/dashboard"
-            class="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2.5 px-5 rounded-xl transition-colors shadow-sm text-sm flex items-center justify-center gap-2 border border-slate-700"
+            class="flex-1 sm:flex-none bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2.5 px-5 rounded-xl transition-colors shadow-sm text-sm flex items-center justify-center gap-2 border border-slate-700"
           >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
             Volver a la Galería
           </a>
 
-          <form action="/api/auth/logout" method="POST">
+          <form action="/api/auth/logout" method="POST" class="flex-1 sm:flex-none">
             <button
               type="submit"
-              class="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 px-5 rounded-xl transition-colors shadow-sm text-sm flex items-center justify-center gap-2"
+              class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 px-5 rounded-xl transition-colors shadow-sm text-sm flex items-center justify-center gap-2"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
               Cerrar Sesión
             </button>
           </form>
 
           <!-- Botón Dark Mode -->
-          <button id="theme-toggle" class="w-10 h-10 rounded-xl bg-slate-800/50 hover:bg-slate-700 flex items-center justify-center text-slate-300 transition-colors border border-slate-700 shadow-sm">
+          <button id="theme-toggle" class="w-10 h-10 shrink-0 rounded-xl bg-slate-800/50 hover:bg-slate-700 flex items-center justify-center text-slate-300 transition-colors border border-slate-700 shadow-sm">
             <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
               <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
             </svg>
@@ -233,7 +230,7 @@ if (!user || !isAdmin) {
           <input type="hidden" id="edit-section-id" value="">
           <div>
             <label class="block text-xs font-medium text-slate-700 mb-1">Título del Video *</label>
-            <input type="text" id="edit-video-title" class="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#0073CF]" required />
+            <input type="text" id="edit-video-title" class="w-full px-3.5 py-2 bg-white text-slate-900 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#0073CF]" required />
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-4 rounded-xl border border-slate-200">
             <div>
@@ -263,6 +260,35 @@ if (!user || !isAdmin) {
             Guardar Cambios
           </button>
           <div id="edit-message" class="hidden mt-2 p-3 rounded-xl text-xs font-medium text-center"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Editar Sección -->
+  <div id="edit-section-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm transition-opacity opacity-0">
+    <div class="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <h3 class="text-lg font-bold text-[#06203D]">Editar Sección</h3>
+        <button id="close-edit-section-btn" class="text-slate-400 hover:text-slate-600 transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="p-6 overflow-y-auto flex-1">
+        <form id="edit-section-form" class="space-y-4">
+          <input type="hidden" id="edit-section-id-input" value="">
+          <div>
+            <label class="block text-xs font-medium text-slate-700 mb-1">Título de la Sección *</label>
+            <input type="text" id="edit-section-title-input" class="w-full px-3.5 py-2 bg-white text-slate-900 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#0073CF]" required />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-700 mb-1">Descripción</label>
+            <textarea id="edit-section-desc-input" class="w-full px-3.5 py-2 bg-white text-slate-900 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#0073CF]" rows="3"></textarea>
+          </div>
+          <button type="submit" id="edit-section-submit-btn" class="w-full bg-[#0073CF] hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-xl transition-colors shadow-sm text-sm">
+            Guardar Cambios
+          </button>
+          <div id="edit-section-message" class="hidden mt-2 p-3 rounded-xl text-xs font-medium text-center"></div>
         </form>
       </div>
     </div>
@@ -307,11 +333,11 @@ if (!user || !isAdmin) {
       const vimeoId = getVimeoId(videoUrl);
 
       if (ytId) {
-        return '<iframe class="w-full h-full border-0" sandbox="allow-scripts allow-same-origin allow-presentation" src="https://www.youtube.com/embed/' + ytId + '?autoplay=1&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+        return '<iframe class="w-full h-full border-0" src="https://www.youtube.com/embed/' + ytId + '?autoplay=1&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" allowfullscreen></iframe>';
       }
 
       if (vimeoId) {
-        return '<iframe class="w-full h-full border-0" src="https://player.vimeo.com/video/' + vimeoId + '?autoplay=1" allow="autoplay; fullscreen" allowfullscreen></iframe>';
+        return '<iframe class="w-full h-full border-0" src="https://player.vimeo.com/video/' + vimeoId + '?autoplay=1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>';
       }
 
       if (videoUrl.includes('drive.google.com')) {
@@ -492,7 +518,7 @@ if (!user || !isAdmin) {
           
           sh += '<div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6 transition-all ' + margin + '" id="admin-section-' + section.id + '">';
           
-          sh += '<div class="flex items-start justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800 cursor-pointer select-none toggle-section-header" data-section-id="' + section.id + '">';
+          sh += '<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800 cursor-pointer select-none toggle-section-header" data-section-id="' + section.id + '">';
           sh += '<div class="flex items-center gap-3"><svg class="chevron-icon w-6 h-6 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>';
           sh += '<div><h3 class="text-xl font-bold text-[#06203D] dark:text-white">' + titlePrefix + section.title + '</h3>';
           if (section.description) {
@@ -500,8 +526,9 @@ if (!user || !isAdmin) {
           }
           sh += '</div></div>';
 
-          sh += '<div class="flex items-center gap-3 shrink-0" onclick="event.stopPropagation()">';
+          sh += '<div class="flex flex-wrap items-center gap-2 mt-3 md:mt-0 w-full md:w-auto shrink-0" onclick="event.stopPropagation()">';
           sh += '<span class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">' + videos.length + ' videos</span>';
+          sh += '<button class="edit-section-btn bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 text-blue-600 dark:text-blue-400 font-semibold px-3 py-1.5 rounded-xl text-xs transition border border-blue-200 dark:border-blue-800 flex items-center gap-1" data-section-id="' + section.id + '">Editar</button>';
           sh += '<button class="toggle-section-btn bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold px-3 py-1.5 rounded-xl text-xs transition border border-slate-300 dark:border-slate-600 flex items-center gap-1" data-section-id="' + section.id + '"><span class="toggle-text">Minimizar</span></button>';
           sh += '<button class="delete-section-btn bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 font-semibold px-3.5 py-1.5 rounded-xl text-xs transition flex items-center gap-1" data-section-id="' + section.id + '">Eliminar</button>';
           sh += '</div></div>';
@@ -518,11 +545,11 @@ if (!user || !isAdmin) {
           sh += '</div>';
 
           sh += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-blue-50/50 p-4 rounded-xl border border-blue-100">';
-          sh += '<div><label class="block text-xs font-semibold text-[#06203D] mb-1">🖼️ Imagen de Portada</label><input type="file" class="thumb-file w-full px-3 py-1.5 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-[#0073CF]" accept="image/png,image/jpeg,image/webp,image/jpg" /></div>';
-          sh += '<div><label class="block text-xs font-semibold text-[#06203D] mb-1">🔗 O URL de Portada</label><input type="url" class="thumb-url w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-[#0073CF]" /></div>';
+          sh += '<div><label class="block text-xs font-semibold text-[#06203D] mb-1">🖼️ Imagen de Portada</label><input type="file" class="thumb-file w-full px-3 py-1.5 bg-white text-slate-900 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-[#0073CF]" accept="image/png,image/jpeg,image/webp,image/jpg" /></div>';
+          sh += '<div><label class="block text-xs font-semibold text-[#06203D] mb-1">🔗 O URL de Portada</label><input type="url" class="thumb-url w-full px-3.5 py-2 bg-white text-slate-900 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-[#0073CF]" /></div>';
           sh += '</div>';
 
-          sh += '<div><label class="block text-xs font-medium text-slate-700 mb-1">Descripción</label><textarea class="video-description w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#0073CF]" rows="2"></textarea></div>';
+          sh += '<div><label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Descripción</label><textarea class="video-description w-full px-3.5 py-2 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border border-slate-300 dark:border-slate-600 rounded-xl text-sm focus:ring-2 focus:ring-[#0073CF]" rows="2"></textarea></div>';
           sh += '<div class="flex items-center gap-3 pt-1"><button type="submit" class="submit-btn bg-[#0073CF] hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-xl text-sm">Publicar Video</button><button type="reset" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-xl text-sm">Limpiar</button></div>';
           sh += '<div class="video-message hidden p-3 rounded-xl text-xs font-medium"></div></form></div>';
 
@@ -547,7 +574,7 @@ if (!user || !isAdmin) {
                 sh += '<p class="text-slate-500 dark:text-slate-400 text-xs truncate mt-0.5">' + video.description + '</p>';
               }
               sh += '<button class="text-[#0073CF] dark:text-[#3399ff] text-xs font-semibold hover:underline mt-1 play-trigger" data-video=\'' + jsonVideo + '\'>Probar Vista Previa</button></div></div>';
-              sh += '<div class="flex items-center gap-2 self-end sm:self-center">';
+              sh += '<div class="flex flex-wrap items-center gap-2 self-end sm:self-center w-full sm:w-auto mt-2 sm:mt-0">';
               sh += '<button class="manage-attachments-btn bg-slate-200 hover:bg-slate-300 text-slate-800 px-3.5 py-1.5 rounded-lg text-xs font-semibold" data-video-id="' + video.id + '">Adjuntos</button>';
               sh += '<button class="edit-video-btn bg-slate-200 hover:bg-slate-300 text-slate-800 px-3.5 py-1.5 rounded-lg text-xs font-semibold" data-video=\'' + jsonVideo + '\'>Editar</button>';
               sh += '<button class="delete-video-btn bg-red-600 hover:bg-red-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold" data-video-id="' + video.id + '">Eliminar</button>';
@@ -613,6 +640,16 @@ if (!user || !isAdmin) {
 
         document.querySelectorAll('.delete-section-btn').forEach(function(btn) {
           btn.addEventListener('click', handleSectionDelete);
+        });
+
+        document.querySelectorAll('.edit-section-btn').forEach(function(btn) {
+          btn.addEventListener('click', function(e) {
+            const sectionId = btn.getAttribute('data-section-id');
+            const section = mainSections.find(s => s.id === sectionId) || subSections.find(s => s.id === sectionId);
+            if (section) {
+              openEditSectionModal(section);
+            }
+          });
         });
 
         document.querySelectorAll('.delete-video-btn').forEach(function(btn) {
@@ -917,6 +954,72 @@ if (!user || !isAdmin) {
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Subir Adjunto';
+      }
+    });
+
+    // Modal Edit Section Logic
+    const editSectionModal = document.getElementById('edit-section-modal');
+    const editSectionForm = document.getElementById('edit-section-form');
+    const editSectionMessage = document.getElementById('edit-section-message');
+    const editSectionSubmitBtn = document.getElementById('edit-section-submit-btn');
+    const editSectionIdInput = document.getElementById('edit-section-id-input');
+    const editSectionTitleInput = document.getElementById('edit-section-title-input');
+    const editSectionDescInput = document.getElementById('edit-section-desc-input');
+
+    document.getElementById('close-edit-section-btn')?.addEventListener('click', () => {
+      editSectionModal.classList.add('opacity-0');
+      setTimeout(() => editSectionModal.classList.add('hidden'), 300);
+    });
+
+    function openEditSectionModal(section) {
+      editSectionIdInput.value = section.id;
+      editSectionTitleInput.value = section.title;
+      editSectionDescInput.value = section.description || '';
+      editSectionMessage.classList.add('hidden');
+      editSectionModal.classList.remove('hidden');
+      setTimeout(() => editSectionModal.classList.remove('opacity-0'), 10);
+    }
+
+    editSectionForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      editSectionMessage.classList.add('hidden');
+      editSectionSubmitBtn.disabled = true;
+      editSectionSubmitBtn.textContent = 'Guardando...';
+
+      try {
+        const id = editSectionIdInput.value;
+        const title = editSectionTitleInput.value;
+        const description = editSectionDescInput.value;
+
+        const response = await fetch('/api/videos/sections', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, title, description }),
+        });
+
+        const data = await safeFetchJson(response, 'Error al actualizar la sección');
+
+        if (response.ok) {
+          editSectionMessage.className = 'p-3 rounded-xl text-xs font-medium bg-green-100 text-green-800 border border-green-200 mt-2';
+          editSectionMessage.textContent = 'Sección actualizada';
+          editSectionMessage.classList.remove('hidden');
+          setTimeout(() => {
+            editSectionModal.classList.add('opacity-0');
+            setTimeout(() => editSectionModal.classList.add('hidden'), 300);
+            loadAdminSections();
+          }, 1000);
+        } else {
+          editSectionMessage.className = 'p-3 rounded-xl text-xs font-medium bg-red-100 text-red-800 border border-red-200 mt-2';
+          editSectionMessage.textContent = 'Error: ' + data.error;
+          editSectionMessage.classList.remove('hidden');
+        }
+      } catch (error) {
+        editSectionMessage.className = 'p-3 rounded-xl text-xs font-medium bg-red-100 text-red-800 border border-red-200 mt-2';
+        editSectionMessage.textContent = 'Error: ' + error.message;
+        editSectionMessage.classList.remove('hidden');
+      } finally {
+        editSectionSubmitBtn.disabled = false;
+        editSectionSubmitBtn.textContent = 'Guardar Cambios';
       }
     });
 
