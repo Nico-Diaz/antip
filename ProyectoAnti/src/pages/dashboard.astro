@@ -12,29 +12,29 @@ const isAdmin = await isUserAdmin(user, accessToken);
     <div class="max-w-7xl mx-auto space-y-8">
       
       <!-- Header del Dashboard -->
-      <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 sm:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 transition-colors duration-300">
+      <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 transition-colors duration-300 flex-wrap">
         <div>
-          <div class="flex items-center gap-3">
+          <div class="flex flex-wrap items-center gap-3">
             <h1 class="text-3xl font-bold text-[#06203D] dark:text-white">Panel de Videos</h1>
             {isAdmin ? (
-              <span class="bg-blue-100 text-[#0073CF] border border-blue-200 text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
+              <span class="bg-blue-100 text-[#0073CF] border border-blue-200 text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1 shrink-0">
                 <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
                 Administrador
               </span>
             ) : (
-              <span class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1 rounded-full">
+              <span class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1 rounded-full shrink-0">
                 Usuario
               </span>
             )}
           </div>
           <p class="text-slate-500 mt-1">
-            Bienvenido, <strong class="text-slate-700">{user?.email || 'Usuario'}</strong>
+            Bienvenido, <strong class="text-slate-700 break-all">{user?.email || 'Usuario'}</strong>
           </p>
         </div>
 
-        <div class="flex flex-col lg:flex-row items-stretch lg:items-center gap-4 w-full lg:w-auto mt-4 md:mt-0">
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-center gap-4 w-full lg:w-auto mt-4 lg:mt-0">
           <!-- Buscador global en tiempo real -->
-          <div class="relative w-full lg:min-w-[260px]">
+          <div class="relative w-full lg:min-w-[260px] shrink-1">
             <input
               type="text"
               id="global-search"
@@ -46,7 +46,7 @@ const isAdmin = await isUserAdmin(user, accessToken);
             </svg>
           </div>
 
-          <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
+          <div class="flex flex-wrap items-center gap-3">
             {isAdmin && (
               <a
                 href="/admin"
