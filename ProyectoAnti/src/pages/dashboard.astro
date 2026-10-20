@@ -57,15 +57,13 @@ const isAdmin = await isUserAdmin(user, accessToken);
               </a>
             )}
 
-            <form action="/api/auth/logout" method="POST" class="flex-1 sm:flex-none">
-              <button
-                type="submit"
-                class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 px-4 rounded-xl transition-colors shadow-sm hover:shadow text-sm flex items-center justify-center gap-2"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                Cerrar Sesión
-              </button>
-            </form>
+            <a
+              href="/api/auth/logout"
+              class="flex-1 sm:flex-none bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 px-4 rounded-xl transition-colors shadow-sm hover:shadow text-sm flex items-center justify-center gap-2"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+              Cerrar Sesión
+            </a>
 
             <!-- Botón Dark Mode -->
             <button id="theme-toggle" class="w-10 h-10 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
