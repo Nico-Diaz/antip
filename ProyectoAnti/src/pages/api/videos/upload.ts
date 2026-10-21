@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro'
 import { supabase, getAuthClient } from '../../../lib/supabase'
 import { isUserAdmin } from '../../../lib/auth'
+import { isHostedVideo } from '../../../lib/videoAccess'
 
 export const POST: APIRoute = async ({ request, cookies }) => {
   try {
@@ -119,7 +120,20 @@ export const GET: APIRoute = async ({ url, cookies }) => {
       throw error
     }
 
-    return new Response(JSON.stringify({ videos: data }), {
+    // Los alumnos nunca reciben la URL real de los archivos alojados: solo el endpoint de streaming protegido
+    const { data: { user } } = await supabase.auth.getUser(accessToken)
+    const isAdmin = await isUserAdmin(user, accessToken)
+    const videos = (data || []).map((video) =>
+      isHostedVideo(video.video_url)
+        ? {
+            ...video,
+            video_url: isAdmin ? video.video_url : null,
+            stream_url: `/api/videos/stream?id=${video.id}`,
+          }
+        : video
+    )
+
+    return new Response(JSON.stringify({ videos }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     })

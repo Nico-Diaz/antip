@@ -396,7 +396,11 @@ if (!user || !isAdmin) {
     const modalDesc = document.getElementById('modal-video-desc');
     const closeModalBtn = document.getElementById('close-modal-btn');
 
-    function renderVideoPlayer(videoUrl) {
+    function renderVideoPlayer(videoUrl, streamUrl) {
+      if (streamUrl) {
+        return '<video src="' + streamUrl + '" controls controlslist="nodownload noremoteplayback" disablepictureinpicture disableremoteplayback autoplay playsinline preload="metadata" oncontextmenu="return false;" class="w-full h-full object-contain bg-black"></video>';
+      }
+
       if (!videoUrl) return '<div class="text-slate-400 p-8 text-center">URL de video no disponible.</div>';
 
       const ytId = getYouTubeId(videoUrl);
@@ -423,7 +427,7 @@ if (!user || !isAdmin) {
       modalSubtitle.textContent = video.title;
       modalDesc.textContent = video.description || 'Sin descripción disponible.';
 
-      modalContainer.innerHTML = renderVideoPlayer(video.video_url);
+      modalContainer.innerHTML = renderVideoPlayer(video.video_url, video.stream_url);
 
       modal.classList.remove('hidden');
       modal.classList.add('flex');

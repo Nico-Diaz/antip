@@ -94,6 +94,7 @@ const isAdmin = await isUserAdmin(user, accessToken);
   <!-- Reproductor Modal de Video -->
   <div
     id="video-modal"
+    data-watermark={user?.email || ''}
     class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md transition-all duration-300 opacity-0"
     role="dialog"
     aria-modal="true"
@@ -130,7 +131,7 @@ const isAdmin = await isUserAdmin(user, accessToken);
       </div>
 
       <!-- Contenedor del Reproductor Embebido -->
-      <div id="modal-video-container" class="aspect-video w-full bg-black flex items-center justify-center">
+      <div id="modal-video-container" class="relative aspect-video w-full bg-black flex items-center justify-center select-none">
         <!-- Dynamic Player -->
       </div>
 
@@ -200,18 +201,41 @@ const isAdmin = await isUserAdmin(user, accessToken);
     const modalDesc = document.getElementById('modal-video-desc');
     const closeModalBtn = document.getElementById('close-modal-btn');
 
-    function renderVideoPlayer(videoUrl) {
+    // Marca de agua con el email del alumno (disuade grabaciones de pantalla)
+    const watermarkText = modal?.getAttribute('data-watermark') || '';
+    let watermarkInterval = null;
+
+    function renderWatermark() {
+      if (!watermarkText) return '';
+      return '<div id="video-watermark" class="pointer-events-none select-none absolute z-20 text-white/40 text-xs sm:text-sm font-semibold tracking-wide transition-all duration-1000" style="top:10%;left:10%;text-shadow:0 1px 2px rgba(0,0,0,.6)">' + watermarkText.replace(/</g, '&lt;') + '</div>';
+    }
+
+    function moveWatermark() {
+      const wm = document.getElementById('video-watermark');
+      if (!wm) return;
+      wm.style.top = (5 + Math.random() * 80) + '%';
+      wm.style.left = (5 + Math.random() * 60) + '%';
+    }
+
+    function renderVideoPlayer(video) {
+      const videoUrl = video.video_url;
+      const streamUrl = video.stream_url;
+
+      if (streamUrl) {
+        return '<video src="' + streamUrl + '" controls controlslist="nodownload noremoteplayback" disablepictureinpicture disableremoteplayback autoplay playsinline preload="metadata" oncontextmenu="return false;" draggable="false" class="w-full h-full object-contain bg-black"></video>';
+      }
+
       if (!videoUrl) return '<div class="text-slate-400 p-8 text-center">URL de video no disponible.</div>';
 
       const ytId = getYouTubeId(videoUrl);
       const vimeoId = getVimeoId(videoUrl);
 
       if (ytId) {
-        return '<iframe class="w-full h-full border-0" src="https://www.youtube.com/embed/' + ytId + '?autoplay=1&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" allowfullscreen></iframe>';
+        return '<iframe class="w-full h-full border-0" src="https://www.youtube-nocookie.com/embed/' + ytId + '?autoplay=1&rel=0&modestbranding=1" allow="accelerometer; autoplay; encrypted-media; gyroscope; fullscreen" allowfullscreen></iframe>';
       }
 
       if (vimeoId) {
-        return '<iframe class="w-full h-full border-0" src="https://player.vimeo.com/video/' + vimeoId + '?autoplay=1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>';
+        return '<iframe class="w-full h-full border-0" src="https://player.vimeo.com/video/' + vimeoId + '?autoplay=1&pip=0&dnt=1" allow="autoplay; fullscreen" allowfullscreen></iframe>';
       }
 
       if (videoUrl.includes('drive.google.com')) {
@@ -219,7 +243,7 @@ const isAdmin = await isUserAdmin(user, accessToken);
         return '<iframe class="w-full h-full border-0" src="' + driveEmbedUrl + '" allow="autoplay" allowfullscreen></iframe>';
       }
 
-      return '<video src="' + videoUrl + '" controls autoplay playsinline class="w-full h-full object-contain bg-black"></video>';
+      return '<div class="text-slate-400 p-8 text-center">Formato de video no soportado.</div>';
     }
 
     let currentModalVideo = null;
@@ -231,7 +255,9 @@ const isAdmin = await isUserAdmin(user, accessToken);
       modalSubtitle.textContent = video.title;
       modalDesc.textContent = video.description || 'Sin descripción disponible.';
 
-      modalContainer.innerHTML = renderVideoPlayer(video.video_url);
+      modalContainer.innerHTML = renderVideoPlayer(video) + renderWatermark();
+      if (watermarkInterval) clearInterval(watermarkInterval);
+      watermarkInterval = setInterval(moveWatermark, 7000);
 
       modal.classList.remove('hidden');
       modal.classList.add('flex');
@@ -343,6 +369,10 @@ const isAdmin = await isUserAdmin(user, accessToken);
         clearInterval(videoProgressInterval);
         videoProgressInterval = null;
       }
+      if (watermarkInterval) {
+        clearInterval(watermarkInterval);
+        watermarkInterval = null;
+      }
       currentModalVideo = null;
       modal.classList.add('opacity-0');
       modal.querySelector('.transform').classList.remove('scale-100');
@@ -379,6 +409,31 @@ const isAdmin = await isUserAdmin(user, accessToken);
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
         closeModal();
+      }
+    });
+
+    // Bloquear menú contextual, arrastre y atajos de guardado/inspección sobre el reproductor
+    modal?.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+    modal?.addEventListener('dragstart', function(e) { e.preventDefault(); });
+
+    // La pantalla completa se aplica al contenedor para mantener visible la marca de agua
+    document.addEventListener('fullscreenchange', function() {
+      const nativeVideo = modalContainer.querySelector('video');
+      if (nativeVideo && document.fullscreenElement === nativeVideo) {
+        document.exitFullscreen()
+          .then(function() { return modalContainer.requestFullscreen(); })
+          .catch(function() {});
+      }
+    });
+    document.addEventListener('keydown', function(e) {
+      const key = e.key.toLowerCase();
+      const ctrl = e.ctrlKey || e.metaKey;
+      if (
+        e.key === 'F12' ||
+        (ctrl && (key === 's' || key === 'u')) ||
+        (ctrl && e.shiftKey && (key === 'i' || key === 'j' || key === 'c'))
+      ) {
+        e.preventDefault();
       }
     });
 

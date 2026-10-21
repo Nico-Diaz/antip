@@ -213,3 +213,8 @@ create policy "Users can update their own ratings"
   to authenticated
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
+
+-- Protección de videos: bucket privado (solo accesible mediante URLs firmadas temporales generadas por /api/videos/stream)
+insert into storage.buckets (id, name, public)
+values ('videos', 'videos', false)
+on conflict (id) do update set public = false;
