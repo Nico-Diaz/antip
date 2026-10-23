@@ -46,7 +46,8 @@ function signBunnyUrl(videoUrl: string): string | null {
 
   const expires = Math.floor(Date.now() / 1000) + STREAM_URL_TTL
   const token = createHash('sha256')
-    .update(tokenKey + url.pathname + expires)
+    // Bunny calcula el token sobre la ruta decodificada (espacios, paréntesis, etc.)
+    .update(tokenKey + decodeURIComponent(url.pathname) + expires)
     .digest('base64')
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
