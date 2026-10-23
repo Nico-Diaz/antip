@@ -423,6 +423,15 @@ const isAdmin = await isUserAdmin(user, accessToken);
         document.exitFullscreen()
           .then(function() { return modalContainer.requestFullscreen(); })
           .catch(function() {});
+        return;
+      }
+      // En celulares, girar a horizontal al entrar en pantalla completa
+      const orientation = screen.orientation;
+      if (!orientation || typeof orientation.lock !== 'function') return;
+      if (document.fullscreenElement === modalContainer) {
+        orientation.lock('landscape').catch(function() {});
+      } else if (!document.fullscreenElement) {
+        try { orientation.unlock(); } catch (e) {}
       }
     });
     document.addEventListener('keydown', function(e) {
