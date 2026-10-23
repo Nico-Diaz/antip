@@ -4,17 +4,12 @@ import { createClient } from '@supabase/supabase-js'
 // Duración de las URLs firmadas de reproducción (segundos)
 const STREAM_URL_TTL = 60 * 60 * 3
 
-function getEnv(key: string): string {
-  // En Astro con Node adapter, import.meta.env tiene todas las variables en servidor
-  // pero también intentamos process.env como fallback
-  const value = (import.meta.env as Record<string, string>)[key] || ''
-  return value
-}
-
-const BUNNY_TOKEN_KEY = getEnv('BUNNY_TOKEN_KEY')
-const BUNNY_PULL_ZONE_URL = getEnv('BUNNY_PULL_ZONE_URL')
-const SUPABASE_URL = getEnv('PUBLIC_SUPABASE_URL')
-const SUPABASE_SERVICE_ROLE_KEY = getEnv('SUPABASE_SERVICE_ROLE_KEY')
+// Astro solo inyecta las variables privadas referenciadas de forma estática (import.meta.env.NOMBRE)
+const runtimeEnv = typeof process !== 'undefined' ? process.env : {}
+const BUNNY_TOKEN_KEY = import.meta.env.BUNNY_TOKEN_KEY || runtimeEnv.BUNNY_TOKEN_KEY || ''
+const BUNNY_PULL_ZONE_URL = import.meta.env.BUNNY_PULL_ZONE_URL || runtimeEnv.BUNNY_PULL_ZONE_URL || ''
+const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL || runtimeEnv.PUBLIC_SUPABASE_URL || ''
+const SUPABASE_SERVICE_ROLE_KEY = import.meta.env.SUPABASE_SERVICE_ROLE_KEY || runtimeEnv.SUPABASE_SERVICE_ROLE_KEY || ''
 
 /**
  * Indica si la URL apunta a un archivo alojado por nosotros (Bunny / Supabase Storage)
@@ -83,18 +78,5 @@ async function signSupabaseUrl(videoUrl: string): Promise<string | null> {
  * Devuelve una URL de reproducción temporal para un video alojado, o null si no se puede firmar.
  */
 export async function getSignedStreamUrl(videoUrl: string): Promise<string | null> {
-  const bunnyUrl = signBunnyUrl(videoUrl)
-  if (bunnyUrl) return bunnyUrl
-
-  const supabaseUrl = await signSupabaseUrl(videoUrl)
-  if (supabaseUrl) return supabaseUrl
-
-  console.error('[getSignedStreamUrl] No se pudo firmar:', {
-    isBunnyUrl: !!(videoUrl?.includes('b-cdn.net')),
-    hasTokenKey: !!BUNNY_TOKEN_KEY,
-    hasPullZone: !!BUNNY_PULL_ZONE_URL,
-    hasServiceKey: !!SUPABASE_SERVICE_ROLE_KEY,
-  })
-
-  return null
+  return signBunnyUrl(videoUrl) ?? (await signSupabaseUrl(videoUrl))
 }
