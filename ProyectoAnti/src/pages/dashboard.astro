@@ -94,7 +94,6 @@ const isAdmin = await isUserAdmin(user, accessToken);
   <!-- Reproductor Modal de Video -->
   <div
     id="video-modal"
-    data-watermark={user?.email || ''}
     class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md transition-all duration-300 opacity-0"
     role="dialog"
     aria-modal="true"
@@ -111,13 +110,6 @@ const isAdmin = await isUserAdmin(user, accessToken);
           </h3>
         </div>
         <div class="flex items-center gap-2">
-          <button
-            id="theater-mode-btn"
-            class="bg-slate-800 text-slate-300 hover:text-white px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors border border-slate-700"
-            title="Modo Cine"
-          >
-            🎬 Modo Cine
-          </button>
           <button
             id="close-modal-btn"
             class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-colors"
@@ -201,22 +193,6 @@ const isAdmin = await isUserAdmin(user, accessToken);
     const modalDesc = document.getElementById('modal-video-desc');
     const closeModalBtn = document.getElementById('close-modal-btn');
 
-    // Marca de agua con el email del alumno (disuade grabaciones de pantalla)
-    const watermarkText = modal?.getAttribute('data-watermark') || '';
-    let watermarkInterval = null;
-
-    function renderWatermark() {
-      if (!watermarkText) return '';
-      return '<div id="video-watermark" class="pointer-events-none select-none absolute z-20 text-white/40 text-xs sm:text-sm font-semibold tracking-wide transition-all duration-1000" style="top:10%;left:10%;text-shadow:0 1px 2px rgba(0,0,0,.6)">' + watermarkText.replace(/</g, '&lt;') + '</div>';
-    }
-
-    function moveWatermark() {
-      const wm = document.getElementById('video-watermark');
-      if (!wm) return;
-      wm.style.top = (5 + Math.random() * 80) + '%';
-      wm.style.left = (5 + Math.random() * 60) + '%';
-    }
-
     function renderVideoPlayer(video) {
       const videoUrl = video.video_url;
       const streamUrl = video.stream_url;
@@ -255,9 +231,26 @@ const isAdmin = await isUserAdmin(user, accessToken);
       modalSubtitle.textContent = video.title;
       modalDesc.textContent = video.description || 'Sin descripción disponible.';
 
-      modalContainer.innerHTML = renderVideoPlayer(video) + renderWatermark();
-      if (watermarkInterval) clearInterval(watermarkInterval);
-      watermarkInterval = setInterval(moveWatermark, 7000);
+      modalContainer.innerHTML = renderVideoPlayer(video);
+
+      const nativeVideo = modalContainer.querySelector('video');
+      nativeVideo?.addEventListener('click', function() {
+        if (typeof nativeVideo.requestFullscreen === 'function') {
+          if (document.fullscreenElement === nativeVideo) return;
+          nativeVideo.requestFullscreen()
+            .then(function() {
+              if (screen.orientation && typeof screen.orientation.lock === 'function') {
+                return screen.orientation.lock('landscape').catch(function() {});
+              }
+            })
+            .catch(function() {});
+          return;
+        }
+
+        if (typeof nativeVideo.webkitEnterFullscreen === 'function' && !nativeVideo.webkitDisplayingFullscreen) {
+          nativeVideo.webkitEnterFullscreen();
+        }
+      });
 
       modal.classList.remove('hidden');
       modal.classList.add('flex');
@@ -290,13 +283,6 @@ const isAdmin = await isUserAdmin(user, accessToken);
           }
         });
 
-      // Reset Theater mode
-      const modalInner = modal.querySelector('.relative');
-      modalInner.classList.remove('max-w-none', 'h-screen', 'rounded-none');
-      modalInner.classList.add('max-w-4xl', 'rounded-2xl', 'max-h-[90vh]');
-      const modalDetails = modal.querySelector('.p-6');
-      modalDetails.classList.remove('hidden');
-      
       // Load and Setup Ratings
       const ratingContainer = document.getElementById('video-rating-stars');
       if (ratingContainer) {
@@ -337,7 +323,6 @@ const isAdmin = await isUserAdmin(user, accessToken);
       }
 
       // Auto-save progress for native video tags
-      const nativeVideo = modalContainer.querySelector('video');
       if (nativeVideo) {
         // Fetch existing progress to resume
         fetch('/api/videos/progress')
@@ -369,10 +354,6 @@ const isAdmin = await isUserAdmin(user, accessToken);
         clearInterval(videoProgressInterval);
         videoProgressInterval = null;
       }
-      if (watermarkInterval) {
-        clearInterval(watermarkInterval);
-        watermarkInterval = null;
-      }
       currentModalVideo = null;
       modal.classList.add('opacity-0');
       modal.querySelector('.transform').classList.remove('scale-100');
@@ -387,21 +368,6 @@ const isAdmin = await isUserAdmin(user, accessToken);
 
     // Modal Event Listeners
     closeModalBtn?.addEventListener('click', closeModal);
-    
-    document.getElementById('theater-mode-btn')?.addEventListener('click', () => {
-      const modalInner = modal.querySelector('.relative');
-      const modalDetails = modal.querySelector('.p-6.bg-slate-900.border-t');
-      
-      if (modalInner.classList.contains('max-w-none')) {
-        modalInner.classList.remove('max-w-none', 'h-screen', 'rounded-none');
-        modalInner.classList.add('max-w-4xl', 'rounded-2xl', 'max-h-[90vh]');
-        modalDetails.classList.remove('hidden');
-      } else {
-        modalInner.classList.add('max-w-none', 'h-screen', 'rounded-none');
-        modalInner.classList.remove('max-w-4xl', 'rounded-2xl', 'max-h-[90vh]');
-        modalDetails.classList.add('hidden');
-      }
-    });
 
     modal?.addEventListener('click', function(e) {
       if (e.target === modal) closeModal();
@@ -416,24 +382,6 @@ const isAdmin = await isUserAdmin(user, accessToken);
     modal?.addEventListener('contextmenu', function(e) { e.preventDefault(); });
     modal?.addEventListener('dragstart', function(e) { e.preventDefault(); });
 
-    // La pantalla completa se aplica al contenedor para mantener visible la marca de agua
-    document.addEventListener('fullscreenchange', function() {
-      const nativeVideo = modalContainer.querySelector('video');
-      if (nativeVideo && document.fullscreenElement === nativeVideo) {
-        document.exitFullscreen()
-          .then(function() { return modalContainer.requestFullscreen(); })
-          .catch(function() {});
-        return;
-      }
-      // En celulares, girar a horizontal al entrar en pantalla completa
-      const orientation = screen.orientation;
-      if (!orientation || typeof orientation.lock !== 'function') return;
-      if (document.fullscreenElement === modalContainer) {
-        orientation.lock('landscape').catch(function() {});
-      } else if (!document.fullscreenElement) {
-        try { orientation.unlock(); } catch (e) {}
-      }
-    });
     document.addEventListener('keydown', function(e) {
       const key = e.key.toLowerCase();
       const ctrl = e.ctrlKey || e.metaKey;
@@ -520,21 +468,28 @@ const isAdmin = await isUserAdmin(user, accessToken);
 
     async function safeFetchJson(res) {
       const text = await res.text();
+      let data;
       try {
-        return JSON.parse(text);
+        data = JSON.parse(text);
       } catch (e) {
-        throw new Error('Respuesta inválida del servidor');
+        throw new Error(res.ok ? 'Respuesta inválida del servidor' : `Error del servidor (${res.status})`);
       }
+      if (!res.ok) {
+        throw new Error(data.error || `Error del servidor (${res.status})`);
+      }
+      return data;
     }
 
     async function loadDashboard() {
       try {
-        const [sectionsRes, progressRes] = await Promise.all([
+        const [sectionsRes, progressRes, videosRes] = await Promise.all([
           fetch('/api/videos/sections'),
-          fetch('/api/videos/progress')
+          fetch('/api/videos/progress'),
+          fetch('/api/videos/upload')
         ]);
         const sectionsData = await safeFetchJson(sectionsRes);
         const progressData = await safeFetchJson(progressRes);
+        const videosData = await safeFetchJson(videosRes);
         
         const progressMap = {};
         if (progressData.progress) {
@@ -548,13 +503,18 @@ const isAdmin = await isUserAdmin(user, accessToken);
           return;
         }
 
+        const videosBySection = new Map();
+        (videosData.videos || []).forEach(video => {
+          const sectionVideos = videosBySection.get(video.section_id) || [];
+          sectionVideos.push(video);
+          videosBySection.set(video.section_id, sectionVideos);
+        });
+
         const mainSections = sectionsData.sections.filter(s => !s.parent_id);
         const subSections = sectionsData.sections.filter(s => s.parent_id);
 
         async function buildSectionHtml(section, isSub = false) {
-          const videosRes = await fetch('/api/videos/upload?section_id=' + section.id);
-          const videosData = await safeFetchJson(videosRes);
-          const videos = videosData.videos || [];
+          const videos = videosBySection.get(section.id) || [];
           
           let completedInSection = 0;
           let videosHtml = '';
@@ -632,6 +592,11 @@ const isAdmin = await isUserAdmin(user, accessToken);
           html += await buildSectionHtml(section, false);
         }
 
+        if (!html) {
+          mainSectionsContainer.innerHTML = '<div class="bg-white dark:bg-slate-900 rounded-2xl p-12 border border-slate-200 dark:border-slate-800 text-center transition-colors"><h3 class="text-lg font-bold text-[#06203D] dark:text-white mb-2">No hay videos disponibles en este momento</h3><p class="text-slate-500 dark:text-slate-400 text-sm">Los videos aparecerán aquí cuando la administración los publique.</p></div>';
+          return;
+        }
+
         mainSectionsContainer.innerHTML = html;
 
         // Listeners para abrir modal de video
@@ -643,7 +608,10 @@ const isAdmin = await isUserAdmin(user, accessToken);
         });
 
       } catch (error) {
-        mainSectionsContainer.innerHTML = '<div class="bg-red-50 text-red-700 p-6 rounded-2xl text-sm border border-red-200">Error al cargar contenido: ' + error.message + '</div>';
+        const errorContainer = document.createElement('div');
+        errorContainer.className = 'bg-red-50 text-red-700 p-6 rounded-2xl text-sm border border-red-200';
+        errorContainer.textContent = 'Error al cargar contenido: ' + error.message;
+        mainSectionsContainer.replaceChildren(errorContainer);
       }
     }
 
