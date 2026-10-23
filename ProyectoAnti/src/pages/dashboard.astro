@@ -111,6 +111,14 @@ const isAdmin = await isUserAdmin(user, accessToken);
         </div>
         <div class="flex items-center gap-2">
           <button
+            id="fullscreen-btn"
+            class="bg-slate-800 text-slate-300 hover:text-white px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors border border-slate-700"
+            title="Pantalla completa"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4"/></svg>
+            <span class="hidden sm:inline">Pantalla completa</span>
+          </button>
+          <button
             id="close-modal-btn"
             class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-colors"
           title="Cerrar (Esc)"
@@ -225,6 +233,53 @@ const isAdmin = await isUserAdmin(user, accessToken);
     let currentModalVideo = null;
     let videoProgressInterval = null;
 
+    function isFullscreen() {
+      return !!(document.fullscreenElement || document.webkitFullscreenElement);
+    }
+
+    // iPhone solo permite pantalla completa nativa del <video>
+    function iosVideoFullscreen(video) {
+      if (!video || typeof video.webkitEnterFullscreen !== 'function' || video.webkitDisplayingFullscreen) return;
+      try {
+        video.webkitEnterFullscreen();
+      } catch (e) {
+        video.addEventListener('loadedmetadata', function() {
+          try { video.webkitEnterFullscreen(); } catch (err) {}
+        }, { once: true });
+      }
+    }
+
+    function enterFullscreen() {
+      if (isFullscreen()) return;
+      const video = modalContainer.querySelector('video');
+      const target = video || modalContainer;
+      const request = target.requestFullscreen || target.webkitRequestFullscreen;
+
+      if (!request || document.fullscreenEnabled === false) {
+        iosVideoFullscreen(video);
+        return;
+      }
+
+      Promise.resolve(request.call(target))
+        .then(function() {
+          if (screen.orientation && typeof screen.orientation.lock === 'function') {
+            return screen.orientation.lock('landscape').catch(function() {});
+          }
+        })
+        .catch(function() { iosVideoFullscreen(video); });
+    }
+
+    document.getElementById('fullscreen-btn')?.addEventListener('click', enterFullscreen);
+
+    function onFullscreenChange() {
+      if (isFullscreen()) return;
+      if (screen.orientation && typeof screen.orientation.unlock === 'function') {
+        try { screen.orientation.unlock(); } catch (e) {}
+      }
+    }
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', onFullscreenChange);
+
     function openModal(video) {
       currentModalVideo = video;
       modalTitle.textContent = video.title;
@@ -234,23 +289,7 @@ const isAdmin = await isUserAdmin(user, accessToken);
       modalContainer.innerHTML = renderVideoPlayer(video);
 
       const nativeVideo = modalContainer.querySelector('video');
-      nativeVideo?.addEventListener('click', function() {
-        if (typeof nativeVideo.requestFullscreen === 'function') {
-          if (document.fullscreenElement === nativeVideo) return;
-          nativeVideo.requestFullscreen()
-            .then(function() {
-              if (screen.orientation && typeof screen.orientation.lock === 'function') {
-                return screen.orientation.lock('landscape').catch(function() {});
-              }
-            })
-            .catch(function() {});
-          return;
-        }
-
-        if (typeof nativeVideo.webkitEnterFullscreen === 'function' && !nativeVideo.webkitDisplayingFullscreen) {
-          nativeVideo.webkitEnterFullscreen();
-        }
-      });
+      nativeVideo?.addEventListener('click', enterFullscreen);
 
       modal.classList.remove('hidden');
       modal.classList.add('flex');
