@@ -28,20 +28,22 @@ const error = Astro.url.searchParams.get("error");
       </div>
     </div>
 
+    <!-- Encabezado Móvil (logo blanco sobre fondo oscuro) -->
+    <div
+      class="md:hidden w-full bg-[#06203D] flex items-center justify-center px-8 py-6"
+    >
+      <img
+        src="/Logo-Instituto-Antipobreza-Argentina.png"
+        alt="Logo Instituto Antipobreza"
+        class="w-full max-w-xs h-auto object-contain"
+      />
+    </div>
+
     <!-- Mitad Derecha (Formulario) -->
     <div
       class="w-full md:w-1/2 bg-white flex flex-1 items-center justify-center p-8 sm:p-12"
     >
       <div class="w-full max-w-md">
-        <!-- Encabezado Móvil -->
-        <div class="md:hidden text-center mb-8">
-          <img
-            src="/Logo-Instituto-Antipobreza-Argentina.png"
-            alt="Logo Instituto Antipobreza"
-            class="w-full h-auto object-contain mx-auto mb-4"
-          />
-        </div>
-
         <div class="mb-10 text-center md:text-left">
           <h1 id="auth-title" class="text-3xl font-bold text-[#06203D] mb-3">
             Iniciar Sesión
